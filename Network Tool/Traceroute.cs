@@ -30,10 +30,9 @@ namespace Network_Tool
 
 		public static void Traceroute(string Target, string Interval, int tick)
 		{
-            ///The traceroute function, sending pings over a series of networks to create a traceroute and obtain critical diagnostic data about those networks
-            ///and the stability of a connection made over them.
-            
-            ///creating of the datatable that will be used to pass stored data between component layers
+            //The traceroute function, sending pings over a series of networks to create a traceroute and obtain critical diagnostic data about those networks
+            //and the stability of a connection made over them.
+            //creating of the datatable that will be used to pass stored data between component layers
             DataTable Hops = new DataTable();
             Hops.Columns.Add("hop", typeof(int));
             Hops.Columns.Add("add", typeof(string));
@@ -42,14 +41,14 @@ namespace Network_Tool
             Hops.Columns.Add("packetloss", typeof(int));
             Hops.Columns.Add("seq", typeof(int));
 
-            ///this part of the code is responsible for the pings over the network and building the traceroute
+            //this part of the code is responsible for the pings over the network and building the traceroute
             int counter = 0;
 			string ping = null;
-			IPAddress ipAddress = Dns.GetHostByName(Target).AddressList[0];
+			IPAddress ipAddress = Dns.GetHostEntry(Target).AddressList[0];
 			using (Ping pingSender = new Ping())
 			{
-                ///the specifics of how the network ping will be use. each item needs to have been set correcly to ensure the data
-                ///fetched is accurate 
+                //the specifics of how the network ping will be use. each item needs to have been set correcly to ensure the data
+                //fetched is accurate 
 				PingOptions pingOptions = new PingOptions();
 				Stopwatch stopWatch = new Stopwatch();
 				string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -63,7 +62,7 @@ namespace Network_Tool
                 for (int i = 0; i < maxHops + 1; i++)
 				{
                     
-                    ///using a stopwatch to determine the time for the ping to be recived
+                    //using a stopwatch to determine the time for the ping to be recived
 					stopWatch.Reset();
 					stopWatch.Start();
                     string send = DateTime.Now.Millisecond.ToString();
@@ -71,8 +70,8 @@ namespace Network_Tool
 					stopWatch.Stop();
                     string recive = DateTime.Now.Millisecond.ToString();
 					
-                    ///the code responsible for generating the packetloss
-                    ///it works by taking the adress of the hop found above and pinging it 5 more times. the number of failed pings are multiplied by 20 to generate packetloss as a percentage
+                    //the code responsible for generating the packetloss
+                    //it works by taking the adress of the hop found above and pinging it 5 more times. the number of failed pings are multiplied by 20 to generate packetloss as a percentage
                     int packetloss = 0;
                     int failed = 0;
                     Ping requestpackets = new Ping();
@@ -88,9 +87,6 @@ namespace Network_Tool
                         }
                     }
                     packetloss = failed * 20;
-
-
-
                     try
                     {
                         //adding data to the datatable mentioned above
@@ -103,8 +99,8 @@ namespace Network_Tool
                     }
                     catch
                     {
-                        ///this segment is run when the trace route ends. 
-                        ///normaly this would thrown an error and thus a catch must be utlized to ensure its execution
+                        //this segment is run when the trace route ends. 
+                        //normaly this would thrown an error and thus a catch must be utlized to ensure its execution
                         int hop = i;
                         Hops.Rows.Add(hop, ping, send, recive, packetloss, i);
                         counter += 1;

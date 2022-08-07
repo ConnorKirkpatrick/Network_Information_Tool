@@ -18,3 +18,13 @@ C:\Users\ckirk\OneDrive\Documents\Work\Computer Science\Network Tool\Network Too
 C:\Users\ckirk\OneDrive\Documents\Work\Computer Science\Network Tool\Network Tool\obj\Debug\Network Tool.exe
 C:\Users\ckirk\OneDrive\Documents\Work\Computer Science\Network Tool\Network Tool\obj\Debug\Network Tool.pdb
 C:\Users\ckirk\OneDrive\Documents\Work\Computer Science\Network Tool\Network Tool\obj\Debug\Network Tool.csprojAssemblyReference.cache
+D:\Network_Information_Tool\Network Tool\bin\Debug\Network Tool.exe.config
+D:\Network_Information_Tool\Network Tool\bin\Debug\Network Tool.exe
+D:\Network_Information_Tool\Network Tool\bin\Debug\Network Tool.pdb
+D:\Network_Information_Tool\Network Tool\obj\Debug\Network Tool.csprojAssemblyReference.cache
+D:\Network_Information_Tool\Network Tool\obj\Debug\Network_Tool.Properties.Resources.resources
+D:\Network_Information_Tool\Network Tool\obj\Debug\Network_Tool.Form1.resources
+D:\Network_Information_Tool\Network Tool\obj\Debug\Network Tool.csproj.GenerateResource.cache
+D:\Network_Information_Tool\Network Tool\obj\Debug\Network Tool.csproj.CoreCompileInputs.cache
+D:\Network_Information_Tool\Network Tool\obj\Debug\Network Tool.exe
+D:\Network_Information_Tool\Network Tool\obj\Debug\Network Tool.pdb

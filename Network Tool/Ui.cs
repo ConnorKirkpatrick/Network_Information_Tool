@@ -14,7 +14,7 @@ namespace Network_Tool
 	public partial class Form1 : Form
 	{
         //the creation of the "partial class" create the file "Form1" as a form utilizing the windows forms library.
-        //this allow the now independant file to be called upon and costruted as a form
+        //this allow the now independent file to be called upon and constructed as a form
         //The class is constructed as a child of the "Program"
         //the few global variables are created here in addition to the creation of global tools such as the stopwatches
         int Click = 0;
@@ -24,15 +24,15 @@ namespace Network_Tool
 
 		public Form1()
 		{
-            ///This is the code executed when the "main()" function calls for Form1
-            ///the initial code sets up all the objects and forces some to be disabled initially
+            //This is the code executed when the "main()" function calls for Form1
+            //the initial code sets up all the objects and forces some to be disabled initially
 			InitializeComponent();
 			Change.Enabled = false;
 			Start.Enabled = false;
 			Halt.Enabled = false;
 
-            ///this segment of code attenpts to connect to the database, first to test if the connection is attainable and secondly to 
-            ///fetch data needed for the global variable tick and to read he contents of the previous data table to display
+            //this segment of code attempts to connect to the database, first to test if the connection is attainable and secondly to 
+            //fetch data needed for the global variable tick and to read he contents of the previous data table to display
             DataTable dt = new DataTable();
             SqlConnection con = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             SqlCommand getTick = new SqlCommand("select * from tick");
@@ -55,9 +55,9 @@ namespace Network_Tool
 
         public void pastupdate()
         {
-            ///This section of data connects to the database with past data to display it to the user.
+            //This section of data connects to the database with past data to display it to the user.
             SqlConnection con = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-            ///creating the datatable and setting up the binding parameters.
+            //creating the datatable and setting up the binding parameters.
             DataTable build = new DataTable();
             build.Columns.Add("Adress", typeof(string));
             build.Columns.Add("Date", typeof(string));
@@ -65,7 +65,7 @@ namespace Network_Tool
             SqlCommand buildpast = new SqlCommand("Select * from previous order by code");
             buildpast.Connection = con;
             SqlDataAdapter adapt = new SqlDataAdapter(buildpast);
-            ///connecting to the database and binding the data
+            //connecting to the database and binding the data
             con.Open();
             adapt.Fill(build);
             con.Close();
@@ -76,13 +76,13 @@ namespace Network_Tool
 
 		private void TestConn_Click(object sender, EventArgs e)
 		{
-            ///testing the users inputs for the tool are valid. includes use of component 2
+            //testing the users inputs for the tool are valid. includes use of component 2
             Adress.ReadOnly = true;
             Interval.ReadOnly = true;
 			SqlConnection con = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             try
             {
-                ///section here for testing if the user inputs are valid or not
+                //section here for testing if the user inputs are valid or not
                 if (Convert.ToInt32(Interval.Text) > 0)
                 {
                     TestConn.Enabled = false;
@@ -90,8 +90,8 @@ namespace Network_Tool
                     Start.Enabled = true;
                     int test = Component2.Testcon(Adress.Text, Interval.Text);
 
-                    ///this part of the code takes the retrun from component2. there are three fixed values to return
-                    ///each value represents a sepcific set of events in component2 and the lable change represents this set of events
+                    //this part of the code takes the return from component2. there are three fixed values to return
+                    //each value represents a specific set of events in component2 and the label change represents this set of events
 
                     if (test == 0)
                     {
@@ -141,25 +141,25 @@ namespace Network_Tool
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-            ///function for selection of the halt button.
+            //function for selection of the halt button.
             Time.Stop();
             tick += 1;
             Halt.Enabled = false;
 			
             TestStat.Text = "Not Running";
 
-            ///creating a timer to pause all user inputs for 5 seconds to let the system finish uploading data to the database
+            //creating a timer to pause all user inputs for 5 seconds to let the system finish uploading data to the database
             Holder = new System.Timers.Timer(Convert.ToDouble(5000));
             Holder.Elapsed += new ElapsedEventHandler(Time_Passed);
             Holder.Enabled = true;
             SqlConnection con = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-            ///refreshing the "tick" datavalue in the server to keep it persistant;
+            //refreshing the "tick" datavalue in the server to keep it persistant;
             SqlCommand deltick = new SqlCommand("delete from tick");
             SqlDataAdapter newtick = new SqlDataAdapter();
             newtick.InsertCommand = new SqlCommand("Insert into tick(tick) values (@tick)",con);
             newtick.InsertCommand.Parameters.Add("@tick", SqlDbType.Int).Value = tick;
             deltick.Connection = con;
-            ///executing the sql command
+            //executing the sql command
             con.Open();
             deltick.ExecuteNonQuery();
             newtick.InsertCommand.ExecuteNonQuery();
@@ -168,11 +168,11 @@ namespace Network_Tool
 
         private void Time_Passed(object sender, ElapsedEventArgs e)
         {
-            ///using a timer to run selected functions in timed intervals
+            //using a timer to run selected functions in timed intervals
             if (Click < 1)
             {
-                //the invoke is required due to the fact that the execution may have to pass over diffent executing threads. 
-                //normaly this would be denied to avoid errors but the invoke command is used to flag the execution as an interupt to the thread
+                //the invoke is required due to the fact that the execution may have to pass over different executing threads. 
+                //normally this would be denied to avoid errors but the invoke command is used to flag the execution as an interrupt to the thread
                 Start.Invoke(new Action(() => Start.Enabled = true));
                 Change.Invoke(new Action(() => Change.Enabled = true));
                 Sync.Invoke(new Action(() => Sync.Enabled = true));
@@ -186,15 +186,15 @@ namespace Network_Tool
         }
         public void KILL()
         {
-            ///function to halt the timer "holder"
+            //function to halt the timer "holder"
             Holder.Stop();
             Click = 0;
         }
         private void Start_Click(object sender, EventArgs e)
 		{
-            ///initiating the test: ensuring the graph is clear, other controls are disabled to the user and adding the required data to the database
+            //initiating the test: ensuring the graph is clear, other controls are disabled to the user and adding the required data to the database
             ClearData();
-            //the tool fetcheds the validated user inputs and passes them to the past data table in form of an SQL query
+            //the tool fetches the validated user inputs and passes them to the past data table in form of an SQL query
             string date = DateTime.Now.Date.ToString();
             string time = DateTime.Now.Hour.ToString();
             SqlConnection Conn = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
@@ -208,7 +208,7 @@ namespace Network_Tool
             addPast.InsertCommand.ExecuteNonQuery();
             Conn.Close();
 
-            ///function for clicking the start button for the tests and the events that follow
+            //function for clicking the start button for the tests and the events that follow
             Sync.Enabled = false;
             TestStat.Text = "Running";
 			Start.Enabled = false;
@@ -222,8 +222,8 @@ namespace Network_Tool
 		}
         public void clear()
         {
-            ///clearing the graph, invokes used due to multiple threads in execution
-            ///option is givend due to some machines restricting the executable to one thread on the processor
+            //clearing the graph, invokes used due to multiple threads in execution
+            //option is given due to some machines restricting the executable to one thread on the processor
             if (this.LATENTCHART.InvokeRequired)
             {
                 LATENTCHART.Invoke(new Action(() => LATENTCHART.Series["Final Latency(ms)"].Points.Clear()));
@@ -246,13 +246,13 @@ namespace Network_Tool
         }
 		private void Time_Elapsed(object sender, ElapsedEventArgs e)
 		{
-            ///Primary timer for providing interleaved function execution
-            ///function for actualy running the network trace tool in component 3/4
+            //Primary timer for providing interleaved function execution
+            //function for actually running the network trace tool in component 3/4
             string target = Adress.Text;
             string INT = Interval.Text;
             while (Halt.Enabled == true)
 			{
-                ///running the trace tool in component 3, clearing the graph and redrawing the points.
+                //running the trace tool in component 3, clearing the graph and redrawing the points.
 				Component3.Times(target, INT, tick);
                 clear();
                 string date = DateTime.Now.Date.ToString();
@@ -271,16 +271,16 @@ namespace Network_Tool
 
         public void Sync_Click(object sender, EventArgs e)
         {
-            ///the area that governs the controls to bind data to the graph;
-            ///direcly below is the area for testing whether the user inputs is a valid input
+            //the area that governs the controls to bind data to the graph;
+            //directly below is the area for testing whether the user inputs is a valid input
             bool Valid = false;
             string host = GraphAddress.Text;
             string date = GraphDate.Text;
             string time = GraphHour.Text;
             string past = CODE.Text;
 
-            //each set of following indented code tests a seperate user input for valid entries
-            //each set of code incorporates a regualr expression check and potentially inequalities to validate the user inputs 
+            //each set of following indented code tests a separate user input for valid entries
+            //each set of code incorporates a regular expression check and potentially inequalities to validate the user inputs 
             if (host != "")
             {
                 try
@@ -383,8 +383,8 @@ namespace Network_Tool
                 }
 
             }
-            ///testing is users have entered the correct volumes of data for the tool to accuratly fetch data from the database
-            ///this is due to the sheer quantity of data in the database. without the correct series of data, a whole variety of values may be selected by mistake
+            //testing is users have entered the correct volumes of data for the tool to accurately fetch data from the database
+            //this is due to the sheer quantity of data in the database. without the correct series of data, a whole variety of values may be selected by mistake
             if (CODE.Text == "")
             {
                 if (CODE.Text == "" && GraphAddress.Text == "" && GraphDate.Text == "" && GraphHour.Text == "")
@@ -421,14 +421,14 @@ namespace Network_Tool
                 }
                 if (Valid == true)
                 {
-                    ///pushes data to Component 2 to test the data requested is actually in the database
-                    ///returns a boolean value
+                    //pushes data to Component 2 to test the data requested is actually in the database
+                    //returns a boolean value
                     string ajustDate = GraphDate.Text;
                     if (ajustDate.Substring(GraphDate.Text.Length - 8) != "00:00:00")
                     {
                         GraphDate.Text = GraphDate.Text +" 00:00:00";
                     }
-                    //pushes data to componet 2 to ensure the requested data is actually obtainable from the database
+                    //pushes data to component 2 to ensure the requested data is actually obtainable from the database
                     bool datatest = Component2.TestDatabase(GraphAddress.Text, ajustDate, Convert.ToInt32(GraphHour.Text));
                     if (datatest == true)
                     {
@@ -437,7 +437,7 @@ namespace Network_Tool
                     }
                     else
                     {
-                        ///displays error box
+                        //displays error box
                         Console.WriteLine("Substring: "+GraphDate.Text.Substring(GraphDate.Text.Length - 8));
                         MessageBox.Show("Incorrect Data//Data not in table");
                     }
@@ -446,10 +446,10 @@ namespace Network_Tool
             }
             else
             { 
-                ///runs only if the user has only entered a code to avoid errors caused by null inputs above
+                //runs only if the user has only entered a code to avoid errors caused by null inputs above
                 if (Convert.ToInt32(CODE.Text) <= tick)
                 {
-                    //executes function call to the subroutine to actaul manage the graphing
+                    //executes function call to the subroutine to actual manage the graphing
                     syncauthenticate();
                 }
                 else
@@ -462,26 +462,26 @@ namespace Network_Tool
         
         public void syncauthenticate()
         {
-            ///sets graphing controls to read only so the program can execute without needing interupt handles shoud the user change the data part way through
+            //sets graphing controls to read only so the program can execute without needing interrupt handles should the user change the data part way through
             GraphAddress.ReadOnly = true;
             GraphDate.ReadOnly = true;
             GraphHour.ReadOnly = true;
             CODE.ReadOnly = true;
-            ///short SQL query that executes to eliminate any blank rows in the database
-            ///is situated here as this is one of the last calls of the main executable
+            //short SQL query that executes to eliminate any blank rows in the database
+            //is situated here as this is one of the last calls of the main executable
             SqlConnection connection = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             SqlCommand trim = new SqlCommand("Delete from data where convert(varchar,hop) = ''");
             trim.Connection = connection;
             connection.Open();
             trim.ExecuteNonQuery();
             connection.Close();
-            ///function used to sync past data to graph
+            //function used to sync past data to graph
             clear();
             string date = GraphDate.Text.ToString();
             string adress = GraphAddress.Text.ToString();
             string hour = GraphHour.Text.ToString();
             string ajustDate = GraphDate.Text;
-            ///checking whether the users input has a trailing "00:00:00" and adds it if not
+            //checking whether the users input has a trailing "00:00:00" and adds it if not
             try
             {
                 if (ajustDate.Substring(GraphDate.Text.Length - 8) != "00:00:00")
@@ -496,7 +496,7 @@ namespace Network_Tool
         }
         private void Change_Click(object sender, EventArgs e)
         {
-            //enabling and disabling specific buttons when the user opts to change the target adress or interval.
+            //enabling and disabling specific buttons when the user opts to change the target address or interval.
             Adress.ReadOnly = false;
             Interval.ReadOnly = false;
             Start.Enabled = false;
@@ -519,9 +519,9 @@ namespace Network_Tool
 
         public void drawTrace(string date, string adress, string hour)
         {
-            ///custom written aggregation algorithm
-            ///function used for real time tracing of a ping and displaying the points in a text box on the GUI
-            ///establishing the connection the the database
+            //custom written aggregation algorithm
+            //function used for real time tracing of a ping and displaying the points in a text box on the GUI
+            //establishing the connection the the database
 			SqlConnection Conn = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             DataTable data = new DataTable();
             SqlCommand graph = new SqlCommand();
@@ -537,7 +537,7 @@ namespace Network_Tool
             {
                 MessageBox.Show("Database Error");
             }
-            ///collecting the required data from the database
+            //collecting the required data from the database
             SqlDataAdapter fill = new SqlDataAdapter(graph);
             fill.Fill(data);
             Conn.Close();
@@ -545,7 +545,7 @@ namespace Network_Tool
             DataView view = new DataView(data);
             DataTable distinct = view.ToTable(true, "hop");
 
-            ///creating the datatables to store the bulk data, data rows to store specific data 
+            //creating the datatables to store the bulk data, data rows to store specific data 
             DataRow[] selectunique;
             selectunique = distinct.Select();
 
@@ -559,11 +559,11 @@ namespace Network_Tool
             dt.Columns.Add("Packet Loss", typeof(int));
             dt.Columns.Add("Jitter", typeof(int));
 
-            //The section bellow is the custom writen SQL aggragation/sorting algorithm for my code
-            //the algorithm works by isolating the individual nodes on the traceroute before independantly testing each one
-            //this system ensures data is not lost,ignored or incorrecly grouped before the main aggragation takes place.
+            //The section bellow is the custom written SQL aggregation/sorting algorithm for my code
+            //the algorithm works by isolating the individual nodes on the traceroute before independently testing each one
+            //this system ensures data is not lost,ignored or incorrectly grouped before the main aggregation takes place.
             
-            //the aggragation takes each of these groups individualy and compares them to find maximum, minimum and average values
+            //the aggregation takes each of these groups individually and compares them to find maximum, minimum and average values
             //this allows the data to be reduced to a acceptable quality and quantity when displayed to the user
 
 
@@ -619,13 +619,13 @@ namespace Network_Tool
                     }
                     jitter = totPL / count;
                     int PL = Convert.ToInt32(selected[selected.Length - 1][8]);
-                    //once the aggragation is done, there should be one data set produced with all of the required attributes
+                    //once the aggregation is done, there should be one data set produced with all of the required attributes
                     //this is then added to the data table
 
                     dt.Rows.Add(x, unique, finalLat, mnlat, mxlat, avelat, PL, jitter);
                 }
             }
-            //transfering the aggregated data into a dataset for versitility
+            //transferring the aggregated data into a dataset for versatility
             DataSet Dset = new DataSet();
             Dset.Clear();
             Dset.Tables.Add(dt);
@@ -639,7 +639,7 @@ namespace Network_Tool
                 TRACETEXT.Invoke(new Action(() => TRACETEXT.DataSource = dt));
             }
 
-            //This singular line sets all the data from the dataset dt to be the sorce of data for the chart
+            //This singular line sets all the data from the dataset dt to be the source of data for the chart
             LATENTCHART.DataSource = dt;
 
             //each pair or lines here refers to one lines to be plotted on the chart
@@ -682,22 +682,22 @@ namespace Network_Tool
         
         private void UpdatePastData_Click(object sender, EventArgs e)
         {
-            ///the command behind the GUI control/button to refresh the small grid containing information on past tests
+            //the command behind the GUI control/button to refresh the small grid containing information on past tests
             pastupdate();
         }
 
         private void PastQuery_Click(object sender, EventArgs e)
         {
-            ///the control behind the query for the past test grid
-            ///the control takes the users input to query the database to return the data matching its parameters
-            ///use of regular expression to classify user input
+            //the control behind the query for the past test grid
+            //the control takes the users input to query the database to return the data matching its parameters
+            //use of regular expression to classify user input
             string host = PastAdress.Text.ToString();
             string date = PastDate.Text.ToString();
             string time = PastTime.Text.ToString();
             string past = PastCode.Text.ToString();
             
             //each set of indented code acts as the validation for one of the users inputs
-            //use of regular expressions and potentialy inequalities to validate the inputs
+            //use of regular expressions and potentially inequalities to validate the inputs
             if (host != "")
             {
                 try
@@ -802,12 +802,12 @@ namespace Network_Tool
             }
             
             //creating datatable to store data coming from the database
-            //if an incomplete series of data is input, too much data may be mistakely selected and displayed
+            //if an incomplete series of data is input, too much data may be mistakenly selected and displayed
             DataTable pastquery = new DataTable();
             pastquery.Columns.Add("Adress", typeof(string));
             pastquery.Columns.Add("Date", typeof(string));
             pastquery.Columns.Add("Time", typeof(string));
-            ///creating the SQL query to fetch the data from the database
+            //creating the SQL query to fetch the data from the database
             SqlConnection con = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             SqlCommand buildpast = new SqlCommand("Select* from previous where convert(varchar, adress) like '%" + host + "%' and convert(varchar, date) like '%" + date + "%' and convert(varchar, time) like '%" + time + "%' and convert(varchar,code) like '%"+past+"%' order by code ");
             buildpast.Connection = con;
@@ -820,7 +820,7 @@ namespace Network_Tool
         }
         private void ClearData()
         {
-            ///clearing the data from both the graph and the data grid
+            //clearing the data from both the graph and the data grid
             LATENTCHART.Series["Final Latency(ms)"].Points.Clear();
             LATENTCHART.Series["Min Latency(ms)"].Points.Clear();
             LATENTCHART.Series["Max Latency(ms)"].Points.Clear();
@@ -833,8 +833,8 @@ namespace Network_Tool
 
         private void Cleandata_Click(object sender, EventArgs e)
         {
-            ///the command behind the control to clear the data for the GUI
-            ///Aditionaly reenables other controls to allow the user acess again
+            //the command behind the control to clear the data for the GUI
+            //Additionally re-enables other controls to allow the user access again
             ClearData();
             GraphAddress.ReadOnly = false;
             GraphDate.ReadOnly = false;

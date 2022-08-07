@@ -26,12 +26,12 @@ namespace Network_Tool
 		}
         public static void Times(string Adress, string Interval, int tick)
         {
-            ///function to take the data from the volatile database and combine it with metadata ready to be added to the main database "DATA"
+            //function to take the data from the volatile database and combine it with metadata ready to be added to the main database "DATA"
             Component4.Traceroute(Adress, Interval, tick);
         }
         public static void runtime(DataTable Hops, int count, string target, int tick)
         {
-            ///data coming from the datatable "dat" is sorted into accending order 
+            //data coming from the datatable "dat" is sorted into accending order 
             DataView sorted = new DataView(Hops);
             sorted.Sort = "hop ASC";
             SqlConnection connection = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
@@ -61,7 +61,7 @@ namespace Network_Tool
                         {
                             PL = 100;
                         }
-                        ///the code responsible for passing the data to the database, all of the data is enterd as a parameter of the base command
+                        //the code responsible for passing the data to the database, all of the data is enterd as a parameter of the base command
                         SqlDataAdapter DataTable = new SqlDataAdapter();
                         DataTable.InsertCommand = new SqlCommand("insert into Data(Host, send, receive, hop, loss, date, time, seq, packetloss, Code) values (@host, @send, @receive, @hop, @loss, @date, @time, @seq, @packetloss, @code)", connection);
                         DataTable.InsertCommand.Parameters.Add("@host", SqlDbType.Text).Value = target;

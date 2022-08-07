@@ -9,7 +9,7 @@ namespace Network_Tool
 	{
         /// <summary>
         /// the namespace acts as an identifier for all components of this program to keep them isolated from other programs
-        /// Seen above are all the class libraries imported for each sub class. these are inhereted but I have overridden them in the other components to increase efficiency
+        /// Seen above are all the class libraries imported for each sub class. these are inherited but I have overridden them in the other components to increase efficiency
         /// </summary>
         public Component3()
 		{
@@ -19,7 +19,7 @@ namespace Network_Tool
 		public Component3(IContainer container)
 		{
             //this container function acts to encapsulate programs executed inside of it
-            //The component is added to the encapsulation and initialzied again to reset it in the isolated environment
+            //The component is added to the encapsulation and initialized again to reset it in the isolated environment
             container.Add(this);
 
 			InitializeComponent();
@@ -31,7 +31,7 @@ namespace Network_Tool
         }
         public static void runtime(DataTable Hops, int count, string target, int tick)
         {
-            //data coming from the datatable "dat" is sorted into accending order 
+            //data coming from the datatable "dat" is sorted into ascending order 
             DataView sorted = new DataView(Hops);
             sorted.Sort = "hop ASC";
             SqlConnection connection = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");

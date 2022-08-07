@@ -46,8 +46,8 @@ namespace Network_Tool
                 {
                     if(row[0].ToString() != "")
                     {
-                        //collecting the data from the table and formating it for further use
-                        //this seperates the data from a known structure and places it into variables for ease of access
+                        //collecting the data from the table and formatting it for further use
+                        //this separates the data from a known structure and places it into variables for ease of access
                         string hop = row[0].ToString();
                         string Adress = row[1].ToString();
                         int sent = Convert.ToInt32(row[2]);
@@ -61,7 +61,7 @@ namespace Network_Tool
                         {
                             PL = 100;
                         }
-                        //the code responsible for passing the data to the database, all of the data is enterd as a parameter of the base command
+                        //the code responsible for passing the data to the database, all of the data is entered as a parameter of the base command
                         SqlDataAdapter DataTable = new SqlDataAdapter();
                         DataTable.InsertCommand = new SqlCommand("insert into Data(Host, send, receive, hop, loss, date, time, seq, packetloss, Code) values (@host, @send, @receive, @hop, @loss, @date, @time, @seq, @packetloss, @code)", connection);
                         DataTable.InsertCommand.Parameters.Add("@host", SqlDbType.Text).Value = target;

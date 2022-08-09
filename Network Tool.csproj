@@ -100,7 +100,7 @@
     <Compile Include="SQLHandle.Designer.cs">
       <DependentUpon>SQLHandle.cs</DependentUpon>
     </Compile>
-    <Compile Include="sqlTest.cs" />
+    <Compile Include="SQLMethods\__tests__\sqlTest.cs" />
     <Compile Include="Traceroute.cs">
       <SubType>Component</SubType>
     </Compile>

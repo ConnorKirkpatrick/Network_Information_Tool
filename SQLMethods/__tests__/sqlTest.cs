@@ -1,9 +1,5 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
+﻿using System.Data;
 using System.Data.SQLite;
-using System.Diagnostics;
-using System.Windows.Forms;
 using NUnit.Framework;
 
 namespace Network_Tool

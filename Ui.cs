@@ -2,6 +2,7 @@
 using System.Data;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Timers;
 using System.Text.RegularExpressions;
 
@@ -34,10 +35,10 @@ namespace Network_Tool
             //this segment of code attempts to connect to the database, first to test if the connection is attainable and secondly to 
             //fetch data needed for the global variable tick and to read he contents of the previous data table to display
             DataTable dt = new DataTable();
-            SqlConnection con = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-            SqlCommand getTick = new SqlCommand("select * from tick");
-            getTick.Connection = con;
-            SqlDataAdapter adapt = new SqlDataAdapter(getTick);
+            SQLiteConnection con = new SQLiteConnection("Data Source=D:\\Network_Information_Tool\\testData.sql;FailIfMissing=True;");            
+            SQLiteCommand getData = new SQLiteCommand("select * from testData");
+            getData.Connection = con;
+            SQLiteDataAdapter adapt = new SQLiteDataAdapter(getData);
             try
             {
                 con.Open();
@@ -419,7 +420,7 @@ namespace Network_Tool
                 {
                     Valid = true;
                 }
-                if (Valid == true)
+                if (Valid)
                 {
                     //pushes data to Component 2 to test the data requested is actually in the database
                     //returns a boolean value

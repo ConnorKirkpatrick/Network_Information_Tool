@@ -24,15 +24,15 @@ namespace Network_Tool
 
 			InitializeComponent();
 		}
-        public static void Times(string Adress, string Interval, int tick)
+        public static void Times(string address, string interval, int tick)
         {
             //function to take the data from the volatile database and combine it with metadata ready to be added to the main database "DATA"
-            Component4.Traceroute(Adress, Interval, tick);
+            Component4.Traceroute(address, interval, tick);
         }
-        public static void runtime(DataTable Hops, int count, string target, int tick)
+        public static void runtime(DataTable hops, int count, string target, int tick)
         {
             //data coming from the datatable "dat" is sorted into ascending order 
-            DataView sorted = new DataView(Hops);
+            DataView sorted = new DataView(hops);
             sorted.Sort = "hop ASC";
             SqlConnection connection = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
 

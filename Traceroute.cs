@@ -62,7 +62,7 @@ namespace Network_Tool
                 for (int i = 0; i < maxHops + 1; i++)
 				{
                     
-                    //using a stopwatch to determine the time for the ping to be recived
+                    //using a stopwatch to determine the time for the ping to be received
 					stopWatch.Reset();
 					stopWatch.Start();
                     string send = DateTime.Now.Millisecond.ToString();
@@ -70,8 +70,8 @@ namespace Network_Tool
 					stopWatch.Stop();
                     string recive = DateTime.Now.Millisecond.ToString();
 					
-                    //the code responsible for generating the packetloss
-                    //it works by taking the adress of the hop found above and pinging it 5 more times. the number of failed pings are multiplied by 20 to generate packetloss as a percentage
+                    //the code responsible for generating the packet loss
+                    //it works by taking the address of the hop found above and pinging it 5 more times. the number of failed pings are multiplied by 20 to generate packet loss as a percentage
                     int packetloss = 0;
                     int failed = 0;
                     Ping requestpackets = new Ping();
@@ -100,7 +100,7 @@ namespace Network_Tool
                     catch
                     {
                         //this segment is run when the trace route ends. 
-                        //normaly this would thrown an error and thus a catch must be utlized to ensure its execution
+                        //normally this would thrown an error and thus a catch must be utilised to ensure its execution
                         int hop = i;
                         Hops.Rows.Add(hop, ping, send, recive, packetloss, i);
                         counter += 1;

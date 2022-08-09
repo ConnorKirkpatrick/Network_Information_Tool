@@ -10,9 +10,18 @@ using System.Threading.Tasks;
 
 namespace Network_Tool.NetworkingMethods
 {
+	/// <summary>
+	/// Class <c>NetworkMethods</c> Provides access to multiple methods created for performing network Pings, Trace routes and packet loss calculations
+	/// </summary>
     public class NetworkMethods
     {
-	    public async Task<string[][]> TraceRoute(string target, string interval)
+	    /// <summary>
+	    /// This method generates a traceroute to a given address along with data such as packet loss and ping time
+	    /// </summary>
+	    /// <param name="target">The target ipv4 as a string</param>
+	    /// <param name="interval">The time interval in ms between each ping</param>
+	    /// <returns>A Array of Arrays containing information such as packet loss, address, time to ping</returns>
+	    public async Task<NetworkHop> TraceRoute(string target, string interval)
 	    {
 		    //The traceroute function, sending pings over a series of networks to create a traceroute and obtain critical diagnostic data about those networks
 		    //and the stability of a connection made over them.
@@ -33,46 +42,62 @@ namespace Network_Tool.NetworkingMethods
 			pingOptions.Ttl = 1;
 			int maxHops = 30;
 
-
-			string[] addresses = new string[30];
-			string[] packetLosses = new string[30];
-			string[] length = new string[1];
-			string[][] netData = new string[][] {addresses,packetLosses,length};
+			NetworkHop baseHop = new NetworkHop();
+			NetworkHop pastHop = new NetworkHop();
 			
 			for (int i = 0; i < maxHops + 1; i++)
 			{
+				NetworkHop hop = new NetworkHop();
 				//using a stopwatch to determine the time for the ping to be received
 				stopWatch.Reset();
 				stopWatch.Start();
                 string send = DateTime.Now.Millisecond.ToString();
                 PingReply pingReply = pingSender.Send(ipAddress.ToString(),Convert.ToInt32(interval),buffer, pingOptions);
 				stopWatch.Stop();
-                string receive = DateTime.Now.Millisecond.ToString();
+				int receive = DateTime.Now.Millisecond;
+				hop.Latency = receive;
                 if (pingReply.Status.ToString() != "TimedOut")
                 {
-	                addresses[i] = pingReply.Address.MapToIPv4().ToString();
+	                hop.Ipv4Address = pingReply.Address.MapToIPv4();
                 }
                 else
                 {
-	                addresses[i] = pingReply.Status.ToString();
+	                hop.Ipv4Address = IPAddress.Parse("0.0.0.0");
                 }
                 
                 int packetLoss = await Task.Factory.StartNew(
 	                () => PacketLoss(ipAddress.ToString(), Convert.ToInt32(interval), buffer),
 	                TaskCreationOptions.None);
-                packetLosses[i] = packetLoss.ToString();
+                hop.PacketLoss = packetLoss;
+
+                if (i == 0)
+                {
+	                baseHop = hop;
+	                pastHop = hop;
+                }
+                else
+                {
+	                hop.PreviousNode = pastHop;
+	                pastHop.NextNode = hop;
+	                pastHop = hop;
+                }
                 
                 if (pingReply.Status == IPStatus.Success)
                 {
-	                length[0] = i.ToString();
-					return netData;
+	                return baseHop;
 				}
 				pingOptions.Ttl++;
 			}
 			Debug.WriteLine("TraceRoute failed");
 			return null;
 	    }
-
+		/// <summary>
+		/// Packet loss measurement system, utilises another thread to prevent blocking the traceroute process
+		/// </summary>
+		/// <param name="target">Targeted ipv4 address for packet loss testing</param>
+		/// <param name="interval">Time interval in ms between each ping</param>
+		/// <param name="buffer">Buffer of data to send as the ping</param>
+		/// <returns>integer representing the percentage of messages dropped </returns>
 	    private int PacketLoss(string target, int interval, byte[] buffer)
 	    {
 		    //breakout method used to check the packet loss of each individual node on the route

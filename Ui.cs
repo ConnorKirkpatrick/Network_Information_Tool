@@ -10,7 +10,7 @@ namespace Network_Tool
 {
     /// <summary>
     /// the namespace acts as an identifier for all components of this program to keep them isolated from other programs
-    /// Seen above are all the class libraries imported for each sub class. these are inhereted but I have overridden them in the other components to increase efficiency
+    /// Seen above are all the class libraries imported for each sub class. these are inherited but I have overridden them in the other components to increase efficiency
     /// </summary>
 	public partial class Form1 : Form
 	{

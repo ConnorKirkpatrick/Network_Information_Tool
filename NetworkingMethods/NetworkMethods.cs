@@ -48,14 +48,15 @@ namespace Network_Tool.NetworkingMethods
 			for (int i = 0; i < maxHops + 1; i++)
 			{
 				NetworkHop hop = new NetworkHop();
+				hop.SequenceNumber = i;
 				//using a stopwatch to determine the time for the ping to be received
 				stopWatch.Reset();
 				stopWatch.Start();
-                string send = DateTime.Now.Millisecond.ToString();
+                int send = DateTime.Now.Millisecond;
                 PingReply pingReply = pingSender.Send(ipAddress.ToString(),Convert.ToInt32(interval),buffer, pingOptions);
 				stopWatch.Stop();
 				int receive = DateTime.Now.Millisecond;
-				hop.Latency = receive;
+				hop.Latency = receive - send;
                 if (pingReply.Status.ToString() != "TimedOut")
                 {
 	                hop.Ipv4Address = pingReply.Address.MapToIPv4();

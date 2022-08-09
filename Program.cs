@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.Common;
 using System.Data.SQLite;
+using Network_Tool.NetworkingMethods;
+
 
 namespace Network_Tool
 {
@@ -20,8 +22,9 @@ namespace Network_Tool
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
+			
 			//calling Form1 to execute
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);

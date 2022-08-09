@@ -10,9 +10,10 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Network_Tool</RootNamespace>
     <AssemblyName>Network Tool</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -87,7 +88,8 @@
     <Compile Include="ConnCheck.Designer.cs">
       <DependentUpon>ConnCheck.cs</DependentUpon>
     </Compile>
-    <Compile Include="NetworkMethods.cs" />
+    <Compile Include="NetworkingMethods\NetworkingMethodsTests.cs" />
+    <Compile Include="NetworkingMethods\NetworkMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLHandle.cs">

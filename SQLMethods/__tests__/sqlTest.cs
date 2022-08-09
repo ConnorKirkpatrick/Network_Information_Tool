@@ -1,5 +1,7 @@
 ﻿using System.Data;
+using System.Data.SqlClient;
 using System.Data.SQLite;
+using Network_Tool.SQLMethods;
 using NUnit.Framework;
 
 namespace Network_Tool
@@ -27,6 +29,14 @@ namespace Network_Tool
             adapt.Fill(dt);
             conn.Close();
             Assert.AreEqual(dt.Columns[0].ToString(), "host", "Unable to access table from database");
+        }
+
+        [Test]
+        public void ClassTest()
+        {
+            SQLConnection connection = new SQLConnection();
+            Assert.IsInstanceOf<SQLConnection>(connection,"Object type not generated correctly");
+            Assert.IsTrue(connection.testConnection(), "Test condition failed to access to database");
         }
     }
 }

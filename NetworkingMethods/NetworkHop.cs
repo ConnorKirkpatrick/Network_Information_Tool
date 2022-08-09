@@ -8,8 +8,8 @@ namespace Network_Tool.NetworkingMethods
         private int sequenceNumber;
         private int latency;
         private int packetLoss;
-        private NetworkHop previousNode;
-        private NetworkHop nextNode;
+        private NetworkHop previousNode = null;
+        private NetworkHop nextNode = null;
         public IPAddress Ipv4Address
         {
             get => ipv4Address;
@@ -45,7 +45,10 @@ namespace Network_Tool.NetworkingMethods
             get => nextNode;
             set => nextNode = value;
         }
-        
+
+        public NetworkHop()
+        { }
+
         public NetworkHop(IPAddress ipv4Address, int sequenceNumber, int latency, int packetLoss)
         {
             this.ipv4Address = ipv4Address;

@@ -92,6 +92,10 @@
     <Compile Include="NetworkingMethods\NetworkMethods.cs" />
     <Compile Include="NetworkingMethods\__tests__\NetworkHopTests.cs" />
     <Compile Include="NetworkingMethods\__tests__\NetworkingMethodsTests.cs" />
+    
+    <Compile Include="SQLMethods\SQLConnection.cs" />
+    <Compile Include="SQLMethods\__tests__\sqlTest.cs" />
+    
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLHandle.cs">

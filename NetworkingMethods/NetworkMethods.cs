@@ -14,7 +14,23 @@ namespace Network_Tool.NetworkingMethods
 	/// Class <c>NetworkMethods</c> Provides access to multiple methods created for performing network Pings, Trace routes and packet loss calculations
 	/// </summary>
     public class NetworkMethods
-    {
+	{
+
+		private Ping pingSender;
+		private byte[] buffer;
+		private PingOptions options;
+		
+		public NetworkMethods()
+		{
+			this.pingSender = new Ping();
+			this.options = new PingOptions();
+			string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+			this.buffer = Encoding.ASCII.GetBytes(data);
+			options.DontFragment = true;
+			options.Ttl = 1;
+		}
+	    
+	    
 	    /// <summary>
 	    /// This method generates a traceroute to a given address along with data such as packet loss and ping time
 	    /// </summary>
@@ -29,22 +45,16 @@ namespace Network_Tool.NetworkingMethods
 			string ping = null;
 			IPAddress ipAddress = Dns.GetHostAddresses(target)
 				.First(address => address.AddressFamily == AddressFamily.InterNetwork);
-			Ping pingSender = new Ping();
 			//the specifics of how the network ping will be use. each item needs to have been set correctly to ensure the data
             //fetched is accurate 
             //We use a 32 byte long message, with non-fragmenting paths chosen to ensure the same path is used for each ping
             //TTl is set to 1 to get 1 hop only, and max hops is set to 30 to limit the path length
-			PingOptions pingOptions = new PingOptions();
-			Stopwatch stopWatch = new Stopwatch();
-			string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-			byte[] buffer = Encoding.ASCII.GetBytes(data);
-			pingOptions.DontFragment = true;
-			pingOptions.Ttl = 1;
-			int maxHops = 30;
+            Stopwatch stopWatch = new Stopwatch();
+			
 
 			NetworkHop baseHop = new NetworkHop();
 			NetworkHop pastHop = new NetworkHop();
-			
+			int maxHops = 30;
 			for (int i = 0; i < maxHops + 1; i++)
 			{
 				NetworkHop hop = new NetworkHop();
@@ -53,7 +63,7 @@ namespace Network_Tool.NetworkingMethods
 				stopWatch.Reset();
 				stopWatch.Start();
                 int send = DateTime.Now.Millisecond;
-                PingReply pingReply = pingSender.Send(ipAddress.ToString(),Convert.ToInt32(interval),buffer, pingOptions);
+                PingReply pingReply = pingSender.Send(ipAddress.ToString(),Convert.ToInt32(interval),buffer, options);
 				stopWatch.Stop();
 				int receive = DateTime.Now.Millisecond;
 				hop.Latency = receive - send;
@@ -87,7 +97,7 @@ namespace Network_Tool.NetworkingMethods
                 {
 	                return baseHop;
 				}
-				pingOptions.Ttl++;
+				options.Ttl++;
 			}
 			Debug.WriteLine("TraceRoute failed");
 			return null;
@@ -120,5 +130,14 @@ namespace Network_Tool.NetworkingMethods
 			//return the calculated packet loss
 		    return failed * 20;
 	    }
+
+		public async Task<bool> Ping(string target)
+		{
+			options.Ttl = 30;
+			PingReply pingReply = pingSender.Send(target,10,buffer, options);
+			options.Ttl = 1;
+			return (pingReply.Address.ToString() == target & pingReply.Status.ToString() == "Success");
+
+		}
     }
 }

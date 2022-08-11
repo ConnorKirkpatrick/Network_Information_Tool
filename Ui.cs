@@ -5,6 +5,8 @@ using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Timers;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Network_Tool.NetworkingMethods;
 using Network_Tool.SQLMethods;
 
@@ -36,7 +38,8 @@ namespace Network_Tool
             Halt.Enabled = false;
 
             //Testing connection to the SQL database
-            if (!SQLConn.testConnection())
+            Task<bool> result = Task<bool>.Factory.StartNew(() => SQLConn.testConnection());
+            if (!result.Result)
             {
                 MessageBox.Show("Error reaching server");
             }
@@ -132,7 +135,6 @@ namespace Network_Tool
 		{
             //function for selection of the halt button.
             Time.Stop();
-            tick += 1;
             Halt.Enabled = false;
 			
             TestStat.Text = "Not Running";
@@ -146,7 +148,7 @@ namespace Network_Tool
             SqlCommand deltick = new SqlCommand("delete from tick");
             SqlDataAdapter newtick = new SqlDataAdapter();
             newtick.InsertCommand = new SqlCommand("Insert into tick(tick) values (@tick)",con);
-            newtick.InsertCommand.Parameters.Add("@tick", SqlDbType.Int).Value = tick;
+            //newtick.InsertCommand.Parameters.Add("@tick", SqlDbType.Int).Value = tick;
             deltick.Connection = con;
             //executing the sql command
             con.Open();
@@ -192,7 +194,7 @@ namespace Network_Tool
             addPast.InsertCommand.Parameters.Add("@host", SqlDbType.Text).Value = Adress.Text.ToString();
             addPast.InsertCommand.Parameters.Add("@date", SqlDbType.Text).Value = date;
             addPast.InsertCommand.Parameters.Add("@time", SqlDbType.Text).Value = time;
-            addPast.InsertCommand.Parameters.Add("@code", SqlDbType.Int).Value = tick;
+            //addPast.InsertCommand.Parameters.Add("@code", SqlDbType.Int).Value = tick;
             Conn.Open();
             addPast.InsertCommand.ExecuteNonQuery();
             Conn.Close();
@@ -242,7 +244,7 @@ namespace Network_Tool
             while (Halt.Enabled == true)
 			{
                 //running the trace tool in component 3, clearing the graph and redrawing the points.
-				Component3.Times(target, INT, tick);
+				//Component3.Times(target, INT, tick);
                 clear();
                 string date = DateTime.Now.Date.ToString();
                 string adress = Adress.Text.ToString();
@@ -436,12 +438,12 @@ namespace Network_Tool
             else
             { 
                 //runs only if the user has only entered a code to avoid errors caused by null inputs above
-                if (Convert.ToInt32(CODE.Text) <= tick)
+                //if (Convert.ToInt32(CODE.Text) <= tick)
                 {
                     //executes function call to the subroutine to actual manage the graphing
                     syncauthenticate();
                 }
-                else
+                //else
                 {
                     MessageBox.Show("Incorrect Data");
                 }

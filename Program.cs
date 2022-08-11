@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.Common;
-using System.Data.SQLite;
-using Network_Tool.NetworkingMethods;
-
 
 namespace Network_Tool
 {
@@ -24,12 +13,11 @@ namespace Network_Tool
 		/// </summary>
 		public static async Task Main(string[] args)
 		{
-			/*
-			//calling Form1 to execute
+			//calling Form1 to execute on the main thread
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Form1());
-			*/
+			Application.Run(new UiForm());
+			/*
 			NetworkMethods netTools = new NetworkMethods();
 			NetworkHop baseHop = await netTools.TraceRoute("8.8.8.8", "500");
 			while (true)
@@ -42,6 +30,7 @@ namespace Network_Tool
 
 				baseHop = baseHop.NextNode;
 			}
+			*/
 		}
 	}
 }

@@ -35,9 +35,9 @@ namespace Network_Tool
             //This is the code executed when the "main()" function calls for Form1
             //the initial code sets up all the objects and forces some to be disabled initially
             InitializeComponent();
-            Change.Enabled = false;
-            Start.Enabled = false;
-            Halt.Enabled = false;
+            ChangeParametersButton.Enabled = false;
+            StartTestButton.Enabled = false;
+            HaltTestButton.Enabled = false;
 
             //Testing connection to the SQL database
             Task<bool> result = Task<bool>.Factory.StartNew(() => SQLConn.testConnection());
@@ -103,9 +103,9 @@ namespace Network_Tool
                 Interval.ReadOnly = false; 
                 return;
             }
-            TestConn.Enabled = false;
-            Change.Enabled = true;
-            Start.Enabled = true;
+            TestConnectionButton.Enabled = false;
+            ChangeParametersButton.Enabled = true;
+            StartTestButton.Enabled = true;
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             /*
@@ -135,11 +135,11 @@ namespace Network_Tool
             else
             {
                 ConnStat.Text = "Failed to connect to" + Adress.Text;
-                Start.Enabled = false;
+                StartTestButton.Enabled = false;
                 Interval.ReadOnly = false;
                 Adress.ReadOnly = false;
-                Change.Enabled = true;
-                TestConn.Enabled = true;
+                ChangeParametersButton.Enabled = true;
+                TestConnectionButton.Enabled = true;
             }
             stopWatch.Stop();
             Debug.WriteLine("Conn test completed in: "+stopWatch.ElapsedMilliseconds);
@@ -152,10 +152,8 @@ namespace Network_Tool
 		{
             //function for selection of the halt button.
             Time.Stop();
-            Halt.Enabled = false;
-			
+            HaltTestButton.Enabled = false;
             TestStat.Text = "Not Running";
-
             //creating a timer to pause all user inputs for 5 seconds to let the system finish uploading data to the database
             Holder = new System.Timers.Timer(Convert.ToDouble(5000));
             Holder.Elapsed += new ElapsedEventHandler(Time_Passed);
@@ -181,9 +179,9 @@ namespace Network_Tool
             {
                 //the invoke is required due to the fact that the execution may have to pass over different executing threads. 
                 //normally this would be denied to avoid errors but the invoke command is used to flag the execution as an interrupt to the thread
-                Start.Invoke(new Action(() => Start.Enabled = true));
-                Change.Invoke(new Action(() => Change.Enabled = true));
-                Sync.Invoke(new Action(() => Sync.Enabled = true));
+                StartTestButton.Invoke(new Action(() => StartTestButton.Enabled = true));
+                ChangeParametersButton.Invoke(new Action(() => ChangeParametersButton.Enabled = true));
+                SyncToGraphButton.Invoke(new Action(() => SyncToGraphButton.Enabled = true));
                 Click += 1;
             }
             else
@@ -217,11 +215,11 @@ namespace Network_Tool
             Conn.Close();
 
             //function for clicking the start button for the tests and the events that follow
-            Sync.Enabled = false;
+            SyncToGraphButton.Enabled = false;
             TestStat.Text = "Running";
-			Start.Enabled = false;
-			Change.Enabled = false;
-			Halt.Enabled = true;
+			StartTestButton.Enabled = false;
+			ChangeParametersButton.Enabled = false;
+			HaltTestButton.Enabled = true;
             Time = new System.Timers.Timer(Convert.ToDouble(Interval.Text));
 			Time.Elapsed += new ElapsedEventHandler(Time_Elapsed);
 			Time.Enabled = true;
@@ -232,23 +230,23 @@ namespace Network_Tool
         {
             //clearing the graph, invokes used due to multiple threads in execution
             //option is given due to some machines restricting the executable to one thread on the processor
-            if (this.LATENTCHART.InvokeRequired)
+            if (this.NetworkInfoChart.InvokeRequired)
             {
-                LATENTCHART.Invoke(new Action(() => LATENTCHART.Series["Final Latency(ms)"].Points.Clear()));
-                LATENTCHART.Invoke(new Action(() => LATENTCHART.Series["Min Latency(ms)"].Points.Clear()));
-                LATENTCHART.Invoke(new Action(() => LATENTCHART.Series["Max Latency(ms)"].Points.Clear()));
-                LATENTCHART.Invoke(new Action(() => LATENTCHART.Series["Average Latency(ms)"].Points.Clear()));
-                LATENTCHART.Invoke(new Action(() => LATENTCHART.Series["Jitter"].Points.Clear()));
-                LATENTCHART.Invoke(new Action(() => LATENTCHART.Series["Packet loss"].Points.Clear()));
+                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Final Latency(ms)"].Points.Clear()));
+                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear()));
+                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear()));
+                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Average Latency(ms)"].Points.Clear()));
+                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Jitter"].Points.Clear()));
+                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Packet loss"].Points.Clear()));
             }
             else
             {
-                LATENTCHART.Series["Final Latency(ms)"].Points.Clear();
-                LATENTCHART.Series["Min Latency(ms)"].Points.Clear();
-                LATENTCHART.Series["Max Latency(ms)"].Points.Clear();
-                LATENTCHART.Series["Average Latency(ms)"].Points.Clear();
-                LATENTCHART.Series["Jitter"].Points.Clear();
-                LATENTCHART.Series["Packet loss"].Points.Clear();
+                NetworkInfoChart.Series["Final Latency(ms)"].Points.Clear();
+                NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear();
+                NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear();
+                NetworkInfoChart.Series["Average Latency(ms)"].Points.Clear();
+                NetworkInfoChart.Series["Jitter"].Points.Clear();
+                NetworkInfoChart.Series["Packet loss"].Points.Clear();
             }
             
         }
@@ -258,7 +256,7 @@ namespace Network_Tool
             //function for actually running the network trace tool in component 3/4
             string target = Adress.Text;
             string INT = Interval.Text;
-            while (Halt.Enabled == true)
+            while (HaltTestButton.Enabled == true)
 			{
                 //running the trace tool in component 3, clearing the graph and redrawing the points.
 				//Component3.Times(target, INT, tick);
@@ -499,7 +497,7 @@ namespace Network_Tool
             }
             catch{ }
 
-            TestConn.Enabled = false;
+            TestConnectionButton.Enabled = false;
             drawTrace(date, adress, hour);
         }
         private void Change_Click(object sender, EventArgs e)
@@ -507,10 +505,10 @@ namespace Network_Tool
             //enabling and disabling specific buttons when the user opts to change the target address or interval.
             Adress.ReadOnly = false;
             Interval.ReadOnly = false;
-            Start.Enabled = false;
-            Halt.Enabled = false;
-            TestConn.Enabled = true;
-            Change.Enabled = false;
+            StartTestButton.Enabled = false;
+            HaltTestButton.Enabled = false;
+            TestConnectionButton.Enabled = true;
+            ChangeParametersButton.Enabled = false;
         }
 
         private void label7_Click(object sender, EventArgs e)
@@ -648,43 +646,43 @@ namespace Network_Tool
             }
 
             //This singular line sets all the data from the dataset dt to be the source of data for the chart
-            LATENTCHART.DataSource = dt;
+            NetworkInfoChart.DataSource = dt;
 
             //each pair or lines here refers to one lines to be plotted on the chart
             //the top lines are all similar due to all lines sharing one set of x axis values
 
-            LATENTCHART.Series["Final Latency(ms)"].XValueMember = "Adress";
-            LATENTCHART.Series["Final Latency(ms)"].YValueMembers = "Final latency(ms)";
+            NetworkInfoChart.Series["Final Latency(ms)"].XValueMember = "Adress";
+            NetworkInfoChart.Series["Final Latency(ms)"].YValueMembers = "Final latency(ms)";
 
-            LATENTCHART.Series["Min Latency(ms)"].XValueMember = "Adress";
-            LATENTCHART.Series["Min Latency(ms)"].YValueMembers = "Min latency(ms)";
+            NetworkInfoChart.Series["Min Latency(ms)"].XValueMember = "Adress";
+            NetworkInfoChart.Series["Min Latency(ms)"].YValueMembers = "Min latency(ms)";
 
-            LATENTCHART.Series["Max Latency(ms)"].XValueMember = "Adress";
-            LATENTCHART.Series["Max Latency(ms)"].YValueMembers = "Max latency(ms)";
+            NetworkInfoChart.Series["Max Latency(ms)"].XValueMember = "Adress";
+            NetworkInfoChart.Series["Max Latency(ms)"].YValueMembers = "Max latency(ms)";
 
-            LATENTCHART.Series["Average Latency(ms)"].XValueMember = "Adress";
-            LATENTCHART.Series["Average Latency(ms)"].YValueMembers = "average latency(ms)";
+            NetworkInfoChart.Series["Average Latency(ms)"].XValueMember = "Adress";
+            NetworkInfoChart.Series["Average Latency(ms)"].YValueMembers = "average latency(ms)";
 
-            LATENTCHART.Series["Packet loss"].XValueMember = "Adress";
-            LATENTCHART.Series["Packet loss"].YValueMembers = "Packet Loss";
+            NetworkInfoChart.Series["Packet loss"].XValueMember = "Adress";
+            NetworkInfoChart.Series["Packet loss"].YValueMembers = "Packet Loss";
 
-            LATENTCHART.Series["Jitter"].XValueMember = "Adress";
-            LATENTCHART.Series["Jitter"].YValueMembers = "Jitter";
+            NetworkInfoChart.Series["Jitter"].XValueMember = "Adress";
+            NetworkInfoChart.Series["Jitter"].YValueMembers = "Jitter";
             try
             {
-                LATENTCHART.ChartAreas["ChartArea1"].AxisX.Interval = 1;
+                NetworkInfoChart.ChartAreas["ChartArea1"].AxisX.Interval = 1;
             }
             catch
             {
-                LATENTCHART.Invoke(new Action(() => LATENTCHART.ChartAreas["ChartArea1"].AxisX.Interval = 1));
+                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.ChartAreas["ChartArea1"].AxisX.Interval = 1));
             }
             try
             {
-                LATENTCHART.Update();
+                NetworkInfoChart.Update();
             }
             catch
             {
-                LATENTCHART.Invoke(new Action(() => LATENTCHART.Update()));
+                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Update()));
             }
         }
         
@@ -829,12 +827,12 @@ namespace Network_Tool
         private void ClearData()
         {
             //clearing the data from both the graph and the data grid
-            LATENTCHART.Series["Final Latency(ms)"].Points.Clear();
-            LATENTCHART.Series["Min Latency(ms)"].Points.Clear();
-            LATENTCHART.Series["Max Latency(ms)"].Points.Clear();
-            LATENTCHART.Series["Average Latency(ms)"].Points.Clear();
-            LATENTCHART.Series["Jitter"].Points.Clear();
-            LATENTCHART.Series["Packet loss"].Points.Clear();
+            NetworkInfoChart.Series["Final Latency(ms)"].Points.Clear();
+            NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear();
+            NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear();
+            NetworkInfoChart.Series["Average Latency(ms)"].Points.Clear();
+            NetworkInfoChart.Series["Jitter"].Points.Clear();
+            NetworkInfoChart.Series["Packet loss"].Points.Clear();
             TRACETEXT.DataSource = null;
             TRACETEXT.Update();
         }
@@ -848,7 +846,7 @@ namespace Network_Tool
             GraphDate.ReadOnly = false;
             GraphHour.ReadOnly = false;
             CODE.ReadOnly = false;
-            TestConn.Enabled = true;
+            TestConnectionButton.Enabled = true;
         }
 
 
@@ -857,73 +855,73 @@ namespace Network_Tool
        
         private void CheckPloss_CheckedChanged(object sender, EventArgs e)
         {
-            if(LATENTCHART.Series["Packet loss"].Enabled == true)
+            if(NetworkInfoChart.Series["Packet loss"].Enabled == true)
             {
-                LATENTCHART.Series["Packet loss"].Enabled = false;
+                NetworkInfoChart.Series["Packet loss"].Enabled = false;
             }
             else
             {
-                LATENTCHART.Series["Packet loss"].Enabled = true;
+                NetworkInfoChart.Series["Packet loss"].Enabled = true;
             }
         }
 
         private void HideFinalLat_CheckedChanged(object sender, EventArgs e)
         {
-            if (LATENTCHART.Series["Final Latency(ms)"].Enabled == true)
+            if (NetworkInfoChart.Series["Final Latency(ms)"].Enabled == true)
             {
-                LATENTCHART.Series["Final Latency(ms)"].Enabled = false;
+                NetworkInfoChart.Series["Final Latency(ms)"].Enabled = false;
             }
             else
             {
-                LATENTCHART.Series["Final Latency(ms)"].Enabled = true;
+                NetworkInfoChart.Series["Final Latency(ms)"].Enabled = true;
             }
         }
 
         private void HideMinimum_CheckedChanged(object sender, EventArgs e)
         {
-            if (LATENTCHART.Series["Min Latency(ms)"].Enabled == true)
+            if (NetworkInfoChart.Series["Min Latency(ms)"].Enabled == true)
             {
-                LATENTCHART.Series["Min Latency(ms)"].Enabled = false;
+                NetworkInfoChart.Series["Min Latency(ms)"].Enabled = false;
             }
             else
             {
-                LATENTCHART.Series["Min Latency(ms)"].Enabled = true;
+                NetworkInfoChart.Series["Min Latency(ms)"].Enabled = true;
             }
         }
 
         private void HideMaximum_CheckedChanged(object sender, EventArgs e)
         {
-            if (LATENTCHART.Series["Max Latency(ms)"].Enabled == true)
+            if (NetworkInfoChart.Series["Max Latency(ms)"].Enabled == true)
             {
-                LATENTCHART.Series["Max Latency(ms)"].Enabled = false;
+                NetworkInfoChart.Series["Max Latency(ms)"].Enabled = false;
             }
             else
             {
-                LATENTCHART.Series["Max Latency(ms)"].Enabled = true;
+                NetworkInfoChart.Series["Max Latency(ms)"].Enabled = true;
             }
         }
 
         private void HideAverage_CheckedChanged(object sender, EventArgs e)
         {
-            if (LATENTCHART.Series["Average Latency(ms)"].Enabled == true)
+            if (NetworkInfoChart.Series["Average Latency(ms)"].Enabled == true)
             {
-                LATENTCHART.Series["Average Latency(ms)"].Enabled = false;
+                NetworkInfoChart.Series["Average Latency(ms)"].Enabled = false;
             }
             else
             {
-                LATENTCHART.Series["Average Latency(ms)"].Enabled = true;
+                NetworkInfoChart.Series["Average Latency(ms)"].Enabled = true;
             }
         }
 
         private void HideJitter_CheckedChanged(object sender, EventArgs e)
         {
-            if (LATENTCHART.Series["Jitter"].Enabled == true)
+            if (NetworkInfoChart.Series["Jitter"].Enabled == true)
             {
-                LATENTCHART.Series["Jitter"].Enabled = false;
+                NetworkInfoChart.Series["Jitter"].Enabled = false;
             }
             else
             {
-                LATENTCHART.Series["Jitter"].Enabled = true;
+                NetworkInfoChart.Series["Jitter"].Enabled = true;
             }
         }
     }

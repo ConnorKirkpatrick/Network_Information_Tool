@@ -62,11 +62,9 @@ namespace Network_Tool.NetworkingMethods
 				//using a stopwatch to determine the time for the ping to be received
 				stopWatch.Reset();
 				stopWatch.Start();
-                int send = DateTime.Now.Millisecond;
-                PingReply pingReply = pingSender.Send(ipAddress.ToString(),Convert.ToInt32(interval),buffer, options);
+				PingReply pingReply = pingSender.Send(ipAddress.ToString(),Convert.ToInt32(interval),buffer, options);
 				stopWatch.Stop();
-				int receive = DateTime.Now.Millisecond;
-				hop.Latency = receive - send;
+				hop.Latency = Convert.ToInt32(stopWatch.ElapsedMilliseconds);
                 if (pingReply.Status.ToString() != "TimedOut")
                 {
 	                hop.Ipv4Address = pingReply.Address.MapToIPv4();

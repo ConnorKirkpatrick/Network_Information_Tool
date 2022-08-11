@@ -3,6 +3,8 @@ using System.Data;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Data.SQLite;
+using System.Diagnostics;
+using System.Net;
 using System.Timers;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -66,67 +68,85 @@ namespace Network_Tool
         }
 
 
-		private void TestConn_Click(object sender, EventArgs e)
+		private async void TestConn_Click(object sender, EventArgs e)
 		{
-            //testing the users inputs for the tool are valid. includes use of component 2
+            Debug.WriteLine(Thread.CurrentThread.ManagedThreadId);
+            Debug.WriteLine(Thread.CurrentThread.IsThreadPoolThread);
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            //Check user parameters are correct, set parameters to read-only while checking
             Adress.ReadOnly = true;
-            Interval.ReadOnly = true;
-			SqlConnection con = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            Interval.ReadOnly = true; 
+            //check that the IP is valid
             try
             {
-                //section here for testing if the user inputs are valid or not
-                if (Convert.ToInt32(Interval.Text) > 0)
+                IPAddress.Parse(Adress.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Invalid IP address");
+                Adress.ReadOnly = false;
+                Interval.ReadOnly = false; 
+                return;
+            }
+            //check that the interval is both a valid integer and >= to 50
+            try
+            {
+                if (Convert.ToInt32(Interval.Text) < 50)
                 {
-                    TestConn.Enabled = false;
-                    Change.Enabled = true;
-                    Start.Enabled = true;
-                    int test = Component2.Testcon(Adress.Text, Interval.Text);
-
-                    //this part of the code takes the return from component2. there are three fixed values to return
-                    //each value represents a specific set of events in component2 and the label change represents this set of events
-
-                    if (test == 0)
-                    {
-                        ConnStat.Text = "Connected to" + Adress.Text;
-                    }
-                    if (test == 1)
-                    {
-                        ConnStat.Text = "Failed to connect to" + Adress.Text;
-                        Start.Enabled = false;
-                        Interval.ReadOnly = false;
-                        Adress.ReadOnly = false;
-                        Change.Enabled = true;
-                        TestConn.Enabled = true;
-                    }
-                    if (test == 2)
-                    {
-                        ConnStat.Text = "Invalid IP adress";
-                        TestConn.Enabled = true;
-                        Start.Enabled = false;
-                        Interval.ReadOnly = false;
-                        Adress.ReadOnly = false;
-                        Change.Enabled = true;
-                    }
-
-                }
-                else
-                {
-                    MessageBox.Show("Invalid Interval Entered");
-                    TestConn.Enabled = true;
-                    Start.Enabled = false;
-                    Interval.ReadOnly = false;
+                    MessageBox.Show("Minimum interval is 50ms");
                     Adress.ReadOnly = false;
-                    Change.Enabled = true;
+                    Interval.ReadOnly = false; 
+                    return;
                 }
             }
             catch
             {
-                MessageBox.Show("Invalid interval");
-                TestConn.Enabled = false;
-                Change.Enabled = true;
+                MessageBox.Show("Invalid Interval entered");
+                Adress.ReadOnly = false;
+                Interval.ReadOnly = false; 
+                return;
             }
-			
-		}
+            
+            TestConn.Enabled = false;
+            Change.Enabled = true;
+            Start.Enabled = true;
+            ThreadPool.QueueUserWorkItem((a) => {
+                if (NetworkMethods.Ping(Adress.Text).Result)
+                {
+                    ConnStat.Invoke(new Action(() => ConnStat.Text = "Connected to" + Adress.Text));
+                    ConnStat.Text = "Connected to" + Adress.Text;
+                }
+                else
+                {
+                    /*
+                    ConnStat.Text = "Failed to connect to" + Adress.Text;
+                    Start.Enabled = false;
+                    Interval.ReadOnly = false;
+                    Adress.ReadOnly = false;
+                    Change.Enabled = true;
+                    TestConn.Enabled = true;
+                    */
+                }});
+            /*
+            bool netStatus = await NetworkMethods.Ping(Adress.Text);
+            if (netStatus)
+            {
+                ConnStat.Text = "Connected to" + Adress.Text;
+            }
+            else
+            {
+                ConnStat.Text = "Failed to connect to" + Adress.Text;
+                Start.Enabled = false;
+                Interval.ReadOnly = false;
+                Adress.ReadOnly = false;
+                Change.Enabled = true;
+                TestConn.Enabled = true;
+            }
+            */
+            stopWatch.Stop();
+            Debug.WriteLine(stopWatch.ElapsedMilliseconds);
+        }
 
 		private void label2_Click(object sender, EventArgs e)
 		{}

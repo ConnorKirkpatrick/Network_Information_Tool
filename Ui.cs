@@ -12,7 +12,7 @@ namespace Network_Tool
     /// the namespace acts as an identifier for all components of this program to keep them isolated from other programs
     /// Seen above are all the class libraries imported for each sub class. these are inherited but I have overridden them in the other components to increase efficiency
     /// </summary>
-	public partial class Form1 : Form
+	public partial class UiForm : Form
 	{
         //the creation of the "partial class" create the file "Form1" as a form utilizing the windows forms library.
         //this allow the now independent file to be called upon and constructed as a form
@@ -23,7 +23,7 @@ namespace Network_Tool
 		static System.Timers.Timer Time;
         static System.Timers.Timer Holder;
 
-		public Form1()
+		public UiForm()
 		{
             //This is the code executed when the "main()" function calls for Form1
             //the initial code sets up all the objects and forces some to be disabled initially

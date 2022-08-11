@@ -1,6 +1,6 @@
 ﻿namespace Network_Tool
 {
-	partial class Form1
+	partial class UiForm
 	{
 		/// <summary>
 		/// Required designer variable.

@@ -5,6 +5,8 @@ using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Timers;
 using System.Text.RegularExpressions;
+using Network_Tool.NetworkingMethods;
+using Network_Tool.SQLMethods;
 
 namespace Network_Tool
 {
@@ -19,36 +21,22 @@ namespace Network_Tool
         //The class is constructed as a child of the "Program"
         //the few global variables are created here in addition to the creation of global tools such as the stopwatches
         int Click = 0;
-        int tick = 0;
-		static System.Timers.Timer Time;
+        private NetworkMethods NetworkMethods = new NetworkMethods();
+        private SQLConnection SQLConn = new SQLConnection();
+        static System.Timers.Timer Time;
         static System.Timers.Timer Holder;
 
-		public UiForm()
-		{
+        public UiForm()
+        {
             //This is the code executed when the "main()" function calls for Form1
             //the initial code sets up all the objects and forces some to be disabled initially
-			InitializeComponent();
-			Change.Enabled = false;
-			Start.Enabled = false;
-			Halt.Enabled = false;
+            InitializeComponent();
+            Change.Enabled = false;
+            Start.Enabled = false;
+            Halt.Enabled = false;
 
-            //this segment of code attempts to connect to the database, first to test if the connection is attainable and secondly to 
-            //fetch data needed for the global variable tick and to read he contents of the previous data table to display
-            DataTable dt = new DataTable();
-            SQLiteConnection con = new SQLiteConnection("Data Source=D:\\Network_Information_Tool\\testData.sql;FailIfMissing=True;");            
-            SQLiteCommand getData = new SQLiteCommand("select * from testData");
-            getData.Connection = con;
-            SQLiteDataAdapter adapt = new SQLiteDataAdapter(getData);
-            try
-            {
-                con.Open();
-                adapt.Fill(dt);
-                con.Close();
-                int Gtick = Convert.ToInt32(dt.Rows[0][0].ToString());
-                pastupdate();
-                tick = tick + Gtick;
-            }
-            catch
+            //Testing connection to the SQL database
+            if (!SQLConn.testConnection())
             {
                 MessageBox.Show("Error reaching server");
             }

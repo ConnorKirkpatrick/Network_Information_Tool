@@ -43,7 +43,7 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.TestConnectionButton = new System.Windows.Forms.Button();
-			this.Adress = new System.Windows.Forms.TextBox();
+			this.Address = new System.Windows.Forms.TextBox();
 			this.TargetLabel = new System.Windows.Forms.Label();
 			this.IntervalLabel = new System.Windows.Forms.Label();
 			this.Interval = new System.Windows.Forms.TextBox();
@@ -102,12 +102,12 @@
 			this.TestConnectionButton.UseVisualStyleBackColor = true;
 			this.TestConnectionButton.Click += new System.EventHandler(this.TestConn_Click);
 			// 
-			// Adress
+			// Address
 			// 
-			this.Adress.Location = new System.Drawing.Point(157, 18);
-			this.Adress.Name = "Adress";
-			this.Adress.Size = new System.Drawing.Size(100, 20);
-			this.Adress.TabIndex = 1;
+			this.Address.Location = new System.Drawing.Point(157, 18);
+			this.Address.Name = "Address";
+			this.Address.Size = new System.Drawing.Size(100, 20);
+			this.Address.TabIndex = 1;
 			// 
 			// TargetLabel
 			// 
@@ -196,7 +196,7 @@
 			// SyncToGraphButton
 			// 
 			this.SyncToGraphButton.Location = new System.Drawing.Point(965, 27);
-			this.SyncToGraphButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.SyncToGraphButton.Margin = new System.Windows.Forms.Padding(2);
 			this.SyncToGraphButton.Name = "SyncToGraphButton";
 			this.SyncToGraphButton.Size = new System.Drawing.Size(124, 40);
 			this.SyncToGraphButton.TabIndex = 12;
@@ -266,7 +266,7 @@
 			legend1.Name = "Legend1";
 			this.NetworkInfoChart.Legends.Add(legend1);
 			this.NetworkInfoChart.Location = new System.Drawing.Point(11, 137);
-			this.NetworkInfoChart.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.NetworkInfoChart.Margin = new System.Windows.Forms.Padding(2);
 			this.NetworkInfoChart.Name = "NetworkInfoChart";
 			series1.ChartArea = "ChartArea1";
 			series1.Color = System.Drawing.Color.RoyalBlue;
@@ -367,7 +367,7 @@
 			this.TRACETEXT.DefaultCellStyle = dataGridViewCellStyle2;
 			this.TRACETEXT.GridColor = System.Drawing.SystemColors.ActiveCaption;
 			this.TRACETEXT.Location = new System.Drawing.Point(12, 611);
-			this.TRACETEXT.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.TRACETEXT.Margin = new System.Windows.Forms.Padding(2);
 			this.TRACETEXT.Name = "TRACETEXT";
 			this.TRACETEXT.ReadOnly = true;
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -408,7 +408,7 @@
 			this.PastData.DefaultCellStyle = dataGridViewCellStyle5;
 			this.PastData.GridColor = System.Drawing.SystemColors.ActiveCaption;
 			this.PastData.Location = new System.Drawing.Point(992, 611);
-			this.PastData.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.PastData.Margin = new System.Windows.Forms.Padding(2);
 			this.PastData.Name = "PastData";
 			this.PastData.ReadOnly = true;
 			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -426,7 +426,7 @@
 			// UpdateSQLDataButton
 			// 
 			this.UpdateSQLDataButton.Location = new System.Drawing.Point(1377, 611);
-			this.UpdateSQLDataButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.UpdateSQLDataButton.Margin = new System.Windows.Forms.Padding(2);
 			this.UpdateSQLDataButton.Name = "UpdateSQLDataButton";
 			this.UpdateSQLDataButton.Size = new System.Drawing.Size(57, 32);
 			this.UpdateSQLDataButton.TabIndex = 26;
@@ -437,7 +437,7 @@
 			// QuerySQLDataButton
 			// 
 			this.QuerySQLDataButton.Location = new System.Drawing.Point(926, 760);
-			this.QuerySQLDataButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.QuerySQLDataButton.Margin = new System.Windows.Forms.Padding(2);
 			this.QuerySQLDataButton.Name = "QuerySQLDataButton";
 			this.QuerySQLDataButton.Size = new System.Drawing.Size(62, 38);
 			this.QuerySQLDataButton.TabIndex = 27;
@@ -448,7 +448,7 @@
 			// PastTime
 			// 
 			this.PastTime.Location = new System.Drawing.Point(913, 703);
-			this.PastTime.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.PastTime.Margin = new System.Windows.Forms.Padding(2);
 			this.PastTime.Name = "PastTime";
 			this.PastTime.Size = new System.Drawing.Size(76, 20);
 			this.PastTime.TabIndex = 28;
@@ -456,7 +456,7 @@
 			// PastDate
 			// 
 			this.PastDate.Location = new System.Drawing.Point(913, 680);
-			this.PastDate.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.PastDate.Margin = new System.Windows.Forms.Padding(2);
 			this.PastDate.Name = "PastDate";
 			this.PastDate.Size = new System.Drawing.Size(76, 20);
 			this.PastDate.TabIndex = 29;
@@ -464,7 +464,7 @@
 			// PastAdress
 			// 
 			this.PastAdress.Location = new System.Drawing.Point(913, 657);
-			this.PastAdress.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.PastAdress.Margin = new System.Windows.Forms.Padding(2);
 			this.PastAdress.Name = "PastAdress";
 			this.PastAdress.Size = new System.Drawing.Size(76, 20);
 			this.PastAdress.TabIndex = 30;
@@ -502,7 +502,7 @@
 			// ClearGraphButton
 			// 
 			this.ClearGraphButton.Location = new System.Drawing.Point(965, 90);
-			this.ClearGraphButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.ClearGraphButton.Margin = new System.Windows.Forms.Padding(2);
 			this.ClearGraphButton.Name = "ClearGraphButton";
 			this.ClearGraphButton.Size = new System.Drawing.Size(124, 33);
 			this.ClearGraphButton.TabIndex = 34;
@@ -539,7 +539,7 @@
 			// PastCode
 			// 
 			this.PastCode.Location = new System.Drawing.Point(913, 726);
-			this.PastCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.PastCode.Margin = new System.Windows.Forms.Padding(2);
 			this.PastCode.Name = "PastCode";
 			this.PastCode.Size = new System.Drawing.Size(76, 20);
 			this.PastCode.TabIndex = 38;
@@ -558,7 +558,7 @@
 			// 
 			this.CheckPloss.AutoSize = true;
 			this.CheckPloss.Location = new System.Drawing.Point(1288, 458);
-			this.CheckPloss.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.CheckPloss.Margin = new System.Windows.Forms.Padding(2);
 			this.CheckPloss.Name = "CheckPloss";
 			this.CheckPloss.Size = new System.Drawing.Size(110, 17);
 			this.CheckPloss.TabIndex = 52;
@@ -570,7 +570,7 @@
 			// 
 			this.HideFinalLat.AutoSize = true;
 			this.HideFinalLat.Location = new System.Drawing.Point(1288, 480);
-			this.HideFinalLat.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.HideFinalLat.Margin = new System.Windows.Forms.Padding(2);
 			this.HideFinalLat.Name = "HideFinalLat";
 			this.HideFinalLat.Size = new System.Drawing.Size(114, 17);
 			this.HideFinalLat.TabIndex = 53;
@@ -582,7 +582,7 @@
 			// 
 			this.HideMinimum.AutoSize = true;
 			this.HideMinimum.Location = new System.Drawing.Point(1288, 502);
-			this.HideMinimum.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.HideMinimum.Margin = new System.Windows.Forms.Padding(2);
 			this.HideMinimum.Name = "HideMinimum";
 			this.HideMinimum.Size = new System.Drawing.Size(133, 17);
 			this.HideMinimum.TabIndex = 54;
@@ -594,7 +594,7 @@
 			// 
 			this.HideMaximum.AutoSize = true;
 			this.HideMaximum.Location = new System.Drawing.Point(1288, 524);
-			this.HideMaximum.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.HideMaximum.Margin = new System.Windows.Forms.Padding(2);
 			this.HideMaximum.Name = "HideMaximum";
 			this.HideMaximum.Size = new System.Drawing.Size(142, 17);
 			this.HideMaximum.TabIndex = 55;
@@ -606,7 +606,7 @@
 			// 
 			this.HideAverage.AutoSize = true;
 			this.HideAverage.Location = new System.Drawing.Point(1288, 546);
-			this.HideAverage.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.HideAverage.Margin = new System.Windows.Forms.Padding(2);
 			this.HideAverage.Name = "HideAverage";
 			this.HideAverage.Size = new System.Drawing.Size(132, 17);
 			this.HideAverage.TabIndex = 56;
@@ -618,7 +618,7 @@
 			// 
 			this.HideJitter.AutoSize = true;
 			this.HideJitter.Location = new System.Drawing.Point(1288, 568);
-			this.HideJitter.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.HideJitter.Margin = new System.Windows.Forms.Padding(2);
 			this.HideJitter.Name = "HideJitter";
 			this.HideJitter.Size = new System.Drawing.Size(73, 17);
 			this.HideJitter.TabIndex = 57;
@@ -683,7 +683,7 @@
 			this.Controls.Add(this.Interval);
 			this.Controls.Add(this.IntervalLabel);
 			this.Controls.Add(this.TargetLabel);
-			this.Controls.Add(this.Adress);
+			this.Controls.Add(this.Address);
 			this.Controls.Add(this.TestConnectionButton);
 			this.Controls.Add(this.pictureBox2);
 			this.Controls.Add(this.NetworkInfoChart);
@@ -704,7 +704,7 @@
 		#endregion
 
 		private System.Windows.Forms.Button TestConnectionButton;
-		private System.Windows.Forms.TextBox Adress;
+		private System.Windows.Forms.TextBox Address;
 		private System.Windows.Forms.Label TargetLabel;
 		private System.Windows.Forms.Label IntervalLabel;
 		private System.Windows.Forms.TextBox Interval;

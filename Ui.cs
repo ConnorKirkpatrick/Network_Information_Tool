@@ -71,17 +71,17 @@ namespace Network_Tool
 		private async void TestConn_Click(object sender, EventArgs e)
 		{
             //Check user parameters are correct, set parameters to read-only while checking
-            Adress.ReadOnly = true;
+            Address.ReadOnly = true;
             Interval.ReadOnly = true; 
             //check that the IP is valid
             try
             {
-                IPAddress.Parse(Adress.Text);
+                IPAddress.Parse(Address.Text);
             }
             catch
             {
                 MessageBox.Show("Invalid IP address");
-                Adress.ReadOnly = false;
+                Address.ReadOnly = false;
                 Interval.ReadOnly = false; 
                 return;
             }
@@ -91,7 +91,7 @@ namespace Network_Tool
                 if (Convert.ToInt32(Interval.Text) < 50)
                 {
                     MessageBox.Show("Minimum interval is 50ms");
-                    Adress.ReadOnly = false;
+                    Address.ReadOnly = false;
                     Interval.ReadOnly = false; 
                     return;
                 }
@@ -99,7 +99,7 @@ namespace Network_Tool
             catch
             {
                 MessageBox.Show("Invalid Interval entered");
-                Adress.ReadOnly = false;
+                Address.ReadOnly = false;
                 Interval.ReadOnly = false; 
                 return;
             }
@@ -127,17 +127,17 @@ namespace Network_Tool
                     
                 }});
                 */
-            bool netStatus = await NetworkMethods.Ping(Adress.Text);
+            bool netStatus = await NetworkMethods.Ping(Address.Text);
             if (netStatus)
             {
-                ConnStat.Text = "Connected to" + Adress.Text;
+                ConnStat.Text = "Connected to" + Address.Text;
             }
             else
             {
-                ConnStat.Text = "Failed to connect to" + Adress.Text;
+                ConnStat.Text = "Failed to connect to" + Address.Text;
                 StartTestButton.Enabled = false;
                 Interval.ReadOnly = false;
-                Adress.ReadOnly = false;
+                Address.ReadOnly = false;
                 ChangeParametersButton.Enabled = true;
                 TestConnectionButton.Enabled = true;
             }
@@ -206,7 +206,7 @@ namespace Network_Tool
             SqlConnection Conn = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             SqlDataAdapter addPast = new SqlDataAdapter();
             addPast.InsertCommand = new SqlCommand("insert into previous(Adress, date, time,code) values (@host, @date, @time, @code)",Conn);
-            addPast.InsertCommand.Parameters.Add("@host", SqlDbType.Text).Value = Adress.Text.ToString();
+            addPast.InsertCommand.Parameters.Add("@host", SqlDbType.Text).Value = Address.Text.ToString();
             addPast.InsertCommand.Parameters.Add("@date", SqlDbType.Text).Value = date;
             addPast.InsertCommand.Parameters.Add("@time", SqlDbType.Text).Value = time;
             //addPast.InsertCommand.Parameters.Add("@code", SqlDbType.Int).Value = tick;
@@ -254,7 +254,7 @@ namespace Network_Tool
 		{
             //Primary timer for providing interleaved function execution
             //function for actually running the network trace tool in component 3/4
-            string target = Adress.Text;
+            string target = Address.Text;
             string INT = Interval.Text;
             while (HaltTestButton.Enabled == true)
 			{
@@ -262,7 +262,7 @@ namespace Network_Tool
 				//Component3.Times(target, INT, tick);
                 clear();
                 string date = DateTime.Now.Date.ToString();
-                string adress = Adress.Text.ToString();
+                string adress = Address.Text.ToString();
                 string hour = DateTime.Now.Hour.ToString();
                 drawTrace(date, adress, hour);
 
@@ -503,7 +503,7 @@ namespace Network_Tool
         private void Change_Click(object sender, EventArgs e)
         {
             //enabling and disabling specific buttons when the user opts to change the target address or interval.
-            Adress.ReadOnly = false;
+            Address.ReadOnly = false;
             Interval.ReadOnly = false;
             StartTestButton.Enabled = false;
             HaltTestButton.Enabled = false;

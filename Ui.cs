@@ -70,10 +70,6 @@ namespace Network_Tool
 
 		private async void TestConn_Click(object sender, EventArgs e)
 		{
-            Debug.WriteLine(Thread.CurrentThread.ManagedThreadId);
-            Debug.WriteLine(Thread.CurrentThread.IsThreadPoolThread);
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
             //Check user parameters are correct, set parameters to read-only while checking
             Adress.ReadOnly = true;
             Interval.ReadOnly = true; 
@@ -107,10 +103,12 @@ namespace Network_Tool
                 Interval.ReadOnly = false; 
                 return;
             }
-            
             TestConn.Enabled = false;
             Change.Enabled = true;
             Start.Enabled = true;
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            /*
             ThreadPool.QueueUserWorkItem((a) => {
                 if (NetworkMethods.Ping(Adress.Text).Result)
                 {
@@ -119,16 +117,16 @@ namespace Network_Tool
                 }
                 else
                 {
-                    /*
+                    
                     ConnStat.Text = "Failed to connect to" + Adress.Text;
                     Start.Enabled = false;
                     Interval.ReadOnly = false;
                     Adress.ReadOnly = false;
                     Change.Enabled = true;
                     TestConn.Enabled = true;
-                    */
+                    
                 }});
-            /*
+                */
             bool netStatus = await NetworkMethods.Ping(Adress.Text);
             if (netStatus)
             {
@@ -143,9 +141,8 @@ namespace Network_Tool
                 Change.Enabled = true;
                 TestConn.Enabled = true;
             }
-            */
             stopWatch.Stop();
-            Debug.WriteLine(stopWatch.ElapsedMilliseconds);
+            Debug.WriteLine("Conn test completed in: "+stopWatch.ElapsedMilliseconds);
         }
 
 		private void label2_Click(object sender, EventArgs e)

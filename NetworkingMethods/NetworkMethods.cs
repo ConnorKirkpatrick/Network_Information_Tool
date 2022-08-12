@@ -43,18 +43,13 @@ namespace Network_Tool.NetworkingMethods
 		    timer.Start();
 		    //The traceroute function, sending pings over a series of networks to create a traceroute and obtain critical diagnostic data about those networks
 		    //and the stability of a connection made over them.
-		    int counter = 0;
-			string ping = null;
-			IPAddress ipAddress = Dns.GetHostAddresses(target)
+		    IPAddress ipAddress = Dns.GetHostAddresses(target)
 				.First(address => address.AddressFamily == AddressFamily.InterNetwork);
 			//the specifics of how the network ping will be use. each item needs to have been set correctly to ensure the data
             //fetched is accurate 
             //We use a 32 byte long message, with non-fragmenting paths chosen to ensure the same path is used for each ping
             //TTl is set to 1 to get 1 hop only, and max hops is set to 30 to limit the path length
-            Stopwatch stopWatch = new Stopwatch();
-			
-
-			NetworkHop baseHop = new NetworkHop();
+            NetworkHop baseHop = new NetworkHop();
 			NetworkHop pastHop = new NetworkHop();
 			int maxHops = 30;
 			for (int i = 0; i < maxHops + 1; i++)
@@ -62,11 +57,8 @@ namespace Network_Tool.NetworkingMethods
 				NetworkHop hop = new NetworkHop();
 				hop.SequenceNumber = i;
 				//using a stopwatch to determine the time for the ping to be received
-				stopWatch.Reset();
-				stopWatch.Start();
 				PingReply pingReply = pingSender.Send(ipAddress.ToString(),Convert.ToInt32(interval),buffer, options);
-				stopWatch.Stop();
-				hop.Latency = Convert.ToInt32(stopWatch.ElapsedMilliseconds);
+				hop.Latency = Convert.ToInt32(pingReply.RoundtripTime);
                 if (pingReply.Status.ToString() != "TimedOut")
                 {
 	                hop.Ipv4Address = pingReply.Address.MapToIPv4();

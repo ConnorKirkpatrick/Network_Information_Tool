@@ -39,6 +39,8 @@ namespace Network_Tool.NetworkingMethods
 	    /// <returns>A Array of Arrays containing information such as packet loss, address, time to ping</returns>
 	    public async Task<NetworkHop> TraceRoute(string target, string interval)
 	    {
+		    Stopwatch timer = new Stopwatch();
+		    timer.Start();
 		    //The traceroute function, sending pings over a series of networks to create a traceroute and obtain critical diagnostic data about those networks
 		    //and the stability of a connection made over them.
 		    int counter = 0;
@@ -93,6 +95,8 @@ namespace Network_Tool.NetworkingMethods
                 
                 if (pingReply.Status == IPStatus.Success)
                 {
+	                timer.Stop();
+	                Debug.WriteLine("Elapsed {0}ms for test",timer.ElapsedMilliseconds);
 	                return baseHop;
 				}
 				options.Ttl++;

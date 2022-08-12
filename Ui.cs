@@ -142,7 +142,7 @@ namespace Network_Tool
                 TestConnectionButton.Enabled = true;
             }
             stopWatch.Stop();
-            Debug.WriteLine("Conn test completed in: "+stopWatch.ElapsedMilliseconds);
+            Debug.WriteLine("Conn test completed in: {0}ms",stopWatch.ElapsedMilliseconds);
         }
 
 		private void label2_Click(object sender, EventArgs e)
@@ -196,35 +196,32 @@ namespace Network_Tool
             Holder.Stop();
             Click = 0;
         }
-        private void Start_Click(object sender, EventArgs e)
+        private async void  Start_Click(object sender, EventArgs e)
 		{
             //initiating the test: ensuring the graph is clear, other controls are disabled to the user and adding the required data to the database
-            ClearData();
-            //the tool fetches the validated user inputs and passes them to the past data table in form of an SQL query
-            string date = DateTime.Now.Date.ToString();
-            string time = DateTime.Now.Hour.ToString();
-            SqlConnection Conn = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-            SqlDataAdapter addPast = new SqlDataAdapter();
-            addPast.InsertCommand = new SqlCommand("insert into previous(Adress, date, time,code) values (@host, @date, @time, @code)",Conn);
-            addPast.InsertCommand.Parameters.Add("@host", SqlDbType.Text).Value = Address.Text.ToString();
-            addPast.InsertCommand.Parameters.Add("@date", SqlDbType.Text).Value = date;
-            addPast.InsertCommand.Parameters.Add("@time", SqlDbType.Text).Value = time;
-            //addPast.InsertCommand.Parameters.Add("@code", SqlDbType.Int).Value = tick;
-            Conn.Open();
-            addPast.InsertCommand.ExecuteNonQuery();
-            Conn.Close();
+            //ClearData();
 
-            //function for clicking the start button for the tests and the events that follow
+
+            //Update all Ui elements to reflect that the test is currently active and disable conflicting controls
             SyncToGraphButton.Enabled = false;
             TestStat.Text = "Running";
 			StartTestButton.Enabled = false;
 			ChangeParametersButton.Enabled = false;
 			HaltTestButton.Enabled = true;
-            Time = new System.Timers.Timer(Convert.ToDouble(Interval.Text));
-			Time.Elapsed += new ElapsedEventHandler(Time_Elapsed);
-			Time.Enabled = true;
-			Time.Start();
-			
+            
+            Debug.WriteLine("Starting net test");
+            //run this as a thread pool
+            //we maintain a object that stores min/max for each hop and aggregates the data before it goes onto the graph
+            NetworkHop baseHop = await NetworkMethods.TraceRoute("8.8.8.8", "500");
+            while (true)
+            {
+                Debug.WriteLine("Seq: {0} Host: {1} Latency: {2}ms PacketLoss: {3}%",baseHop.SequenceNumber,baseHop.Ipv4Address, baseHop.Latency, baseHop.PacketLoss);
+                if (baseHop.NextNode == null)
+                {
+                    break;
+                }
+                baseHop = baseHop.NextNode;
+            }
 		}
         public void clear()
         {
@@ -232,19 +229,17 @@ namespace Network_Tool
             //option is given due to some machines restricting the executable to one thread on the processor
             if (this.NetworkInfoChart.InvokeRequired)
             {
-                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Final Latency(ms)"].Points.Clear()));
+                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Latency(ms)"].Points.Clear()));
                 NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear()));
                 NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear()));
-                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Average Latency(ms)"].Points.Clear()));
                 NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Jitter"].Points.Clear()));
                 NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Packet loss"].Points.Clear()));
             }
             else
             {
-                NetworkInfoChart.Series["Final Latency(ms)"].Points.Clear();
+                NetworkInfoChart.Series["Latency(ms)"].Points.Clear();
                 NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear();
                 NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear();
-                NetworkInfoChart.Series["Average Latency(ms)"].Points.Clear();
                 NetworkInfoChart.Series["Jitter"].Points.Clear();
                 NetworkInfoChart.Series["Packet loss"].Points.Clear();
             }

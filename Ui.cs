@@ -196,15 +196,96 @@ namespace Network_Tool
             Debug.WriteLine("Starting net test");
             //run this as a thread pool
             //we maintain a object that stores min/max for each hop and aggregates the data before it goes onto the graph
-            NetworkHop baseHop = await NetworkMethods.TraceRoute("8.8.8.8", "500");
+            baseHop = await NetworkMethods.TraceRoute(Address.Text);
+            NetworkHop nextHop = baseHop;
             while (true)
             {
-                Debug.WriteLine("Seq: {0} Host: {1} Latency: {2}ms PacketLoss: {3}%",baseHop.SequenceNumber,baseHop.Ipv4Address, baseHop.Latency, baseHop.PacketLoss);
-                if (baseHop.NextNode == null)
+                Debug.WriteLine("Seq: {0} Host: {1} Latency: {2}ms PacketLoss: {3}%",nextHop.SequenceNumber,nextHop.Ipv4Address, nextHop.Latency, nextHop.PacketLoss);
+                NetworkInfoChart.Series["Latency(ms)"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.Latency);
+                NetworkInfoChart.Series["Average Latency(ms)"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.AverageLatency);
+                NetworkInfoChart.Series["Min Latency(ms)"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.MinLatency);
+                NetworkInfoChart.Series["Max Latency(ms)"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.MaxLatency);
+                NetworkInfoChart.Series["Packet loss"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.PacketLoss);
+                NetworkInfoChart.Series["Jitter"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.MaxLoss - nextHop.MinLoss);
+                NetworkInfoChart.Refresh();
+                if (nextHop.NextNode == null)
                 {
                     break;
                 }
-                baseHop = baseHop.NextNode;
+                nextHop = nextHop.NextNode;
+            }
+            Debug.WriteLine(Thread.CurrentThread.ManagedThreadId);
+            
+            
+            Debug.WriteLine("Current Starting IP: {0}",nextHop.Ipv4Address);
+            await Task.Run(() => 
+            {
+                runTest(Interval.Text);
+            });
+        }
+
+        private void runTest(String interval)
+        {
+            NetworkHop nextHop = baseHop;
+            while (testActive)
+            {
+                while (true)
+                {
+                    ThreadPool.QueueUserWorkItem(UpdateHop, nextHop);
+                    if (nextHop.SequenceNumber == 1)
+                    {
+                        baseHop = nextHop;
+                    }
+                    else if(nextHop.NextNode == null)
+                    {
+                        break;
+                    }
+                    nextHop = nextHop.NextNode;
+                }
+                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Update()));
+                nextHop = baseHop;
+                Thread.Sleep(Convert.ToInt32(interval));
+            }
+            Debug.WriteLine("TESTING ENDED");
+        }
+        public async void UpdateHop(Object hop)
+        {
+            NetworkHop nextHop = (NetworkHop)hop;
+            //check that the test has not been halted before running expensive ping request
+            if (!testActive)
+            {
+                return;
+            }
+            nextHop = await NetworkMethods.UpdatePing(nextHop);
+            //check that the test hasn't been halted during the wait for the ping 
+            if (!testActive)
+            {
+                return;
+            }
+            Debug.WriteLine("Seq: {0} Host: {1} Latency: {2}ms PacketLoss: {3}%",nextHop.SequenceNumber,nextHop.Ipv4Address, nextHop.Latency, nextHop.PacketLoss);
+            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Latency(ms)"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.Latency)));
+            NetworkInfoChart.Invoke(new Action(() =>
+                NetworkInfoChart.Series["Average Latency(ms)"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.AverageLatency)));
+            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Min Latency(ms)"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.MinLatency)));
+            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Max Latency(ms)"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.MaxLatency)));
+            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Packet loss"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.PacketLoss)));
+            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Jitter"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.MaxLoss - nextHop.MinLoss)));
+            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Refresh()));
+            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Update()));
+            
+            if (nextHop.SequenceNumber == 1)
+            {
+                //overwrite the baseHop
+                baseHop = nextHop;
+            }
+            else
+            {
+                NetworkHop replaceHop = baseHop;
+                for (int i = 0; i < nextHop.SequenceNumber; i++)
+                {
+                    replaceHop = replaceHop.NextNode;
+                }
+                replaceHop = nextHop;
             }
 		}
         public void clear()

@@ -108,12 +108,12 @@ namespace Network_Tool
                 Interval.ReadOnly = false; 
                 return;
             }
-            //check that the interval is both a valid integer and >= to 50
+            //check that the interval is both a valid integer and >= to 500ms
             try
             {
-                if (Convert.ToInt32(Interval.Text) < 50)
+                if (Convert.ToInt32(Interval.Text) < 500)
                 {
-                    MessageBox.Show("Minimum interval is 50ms");
+                    MessageBox.Show("Minimum interval is 500ms");
                     Address.ReadOnly = false;
                     Interval.ReadOnly = false; 
                     return;

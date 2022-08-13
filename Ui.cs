@@ -46,6 +46,28 @@ namespace Network_Tool
             {
                 MessageBox.Show("Error reaching server");
             }
+            
+            //setup the chart
+            NetworkInfoChart.Series["Latency(ms)"].XValueMember = "Address";
+            NetworkInfoChart.Series["Latency(ms)"].YValueMembers = "Latency(ms)";
+            
+            NetworkInfoChart.Series["Average Latency(ms)"].XValueMember = "Address";
+            NetworkInfoChart.Series["Average Latency(ms)"].YValueMembers = "Average Latency(ms)";
+
+            NetworkInfoChart.Series["Min Latency(ms)"].XValueMember = "Address";
+            NetworkInfoChart.Series["Min Latency(ms)"].YValueMembers = "Min latency(ms)";
+
+            NetworkInfoChart.Series["Max Latency(ms)"].XValueMember = "Address";
+            NetworkInfoChart.Series["Max Latency(ms)"].YValueMembers = "Max latency(ms)";
+
+            NetworkInfoChart.Series["Packet loss"].XValueMember = "Address";
+            NetworkInfoChart.Series["Packet loss"].YValueMembers = "Packet Loss";
+
+            NetworkInfoChart.Series["Jitter"].XValueMember = "Address";
+            NetworkInfoChart.Series["Jitter"].YValueMembers = "Jitter";
+            NetworkInfoChart.ChartAreas["ChartArea1"].AxisX.Interval = 1;
+            NetworkInfoChart.Update();
+
         }
 
         public void pastupdate()

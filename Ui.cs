@@ -131,25 +131,7 @@ namespace Network_Tool
             StartTestButton.Enabled = true;
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-            /*
-            ThreadPool.QueueUserWorkItem((a) => {
-                if (NetworkMethods.Ping(Adress.Text).Result)
-                {
-                    ConnStat.Invoke(new Action(() => ConnStat.Text = "Connected to" + Adress.Text));
-                    ConnStat.Text = "Connected to" + Adress.Text;
-                }
-                else
-                {
-                    
-                    ConnStat.Text = "Failed to connect to" + Adress.Text;
-                    Start.Enabled = false;
-                    Interval.ReadOnly = false;
-                    Adress.ReadOnly = false;
-                    Change.Enabled = true;
-                    TestConn.Enabled = true;
-                    
-                }});
-                */
+
             bool netStatus = await NetworkMethods.Ping(Address.Text);
             if (netStatus)
             {
@@ -170,31 +152,8 @@ namespace Network_Tool
 
 		private void label2_Click(object sender, EventArgs e)
 		{}
-
-		private void button1_Click(object sender, EventArgs e)
-		{
-            //function for selection of the halt button.
-            Time.Stop();
-            HaltTestButton.Enabled = false;
-            TestStat.Text = "Not Running";
-            //creating a timer to pause all user inputs for 5 seconds to let the system finish uploading data to the database
-            Holder = new System.Timers.Timer(Convert.ToDouble(5000));
-            Holder.Elapsed += new ElapsedEventHandler(Time_Passed);
-            Holder.Enabled = true;
-            SqlConnection con = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-            //refreshing the "tick" datavalue in the server to keep it persistant;
-            SqlCommand deltick = new SqlCommand("delete from tick");
-            SqlDataAdapter newtick = new SqlDataAdapter();
-            newtick.InsertCommand = new SqlCommand("Insert into tick(tick) values (@tick)",con);
-            //newtick.InsertCommand.Parameters.Add("@tick", SqlDbType.Int).Value = tick;
-            deltick.Connection = con;
-            //executing the sql command
-            con.Open();
-            deltick.ExecuteNonQuery();
-            newtick.InsertCommand.ExecuteNonQuery();
-            Holder.Start();
-        }
-
+        
+        
         private void Time_Passed(object sender, ElapsedEventArgs e)
         {
             //using a timer to run selected functions in timed intervals

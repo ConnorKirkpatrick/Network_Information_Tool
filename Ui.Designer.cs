@@ -35,6 +35,7 @@
 			System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+			System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -50,7 +51,7 @@
 			this.TestStatusLabel = new System.Windows.Forms.Label();
 			this.ConnStat = new System.Windows.Forms.Label();
 			this.StartTestButton = new System.Windows.Forms.Button();
-			this.HaltTestButton = new System.Windows.Forms.Button();
+			this.HaltButton = new System.Windows.Forms.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.SyncToGraphButton = new System.Windows.Forms.Button();
 			this.PastTargetLabel = new System.Windows.Forms.Label();
@@ -172,15 +173,15 @@
 			this.StartTestButton.UseVisualStyleBackColor = true;
 			this.StartTestButton.Click += new System.EventHandler(this.Start_Click);
 			// 
-			// HaltTestButton
+			// HaltButton
 			// 
-			this.HaltTestButton.Location = new System.Drawing.Point(141, 80);
-			this.HaltTestButton.Name = "HaltTestButton";
-			this.HaltTestButton.Size = new System.Drawing.Size(124, 51);
-			this.HaltTestButton.TabIndex = 9;
-			this.HaltTestButton.Text = "Halt Test";
-			this.HaltTestButton.UseVisualStyleBackColor = true;
-			this.HaltTestButton.Click += new System.EventHandler(this.button1_Click);
+			this.HaltButton.Location = new System.Drawing.Point(141, 80);
+			this.HaltButton.Name = "HaltButton";
+			this.HaltButton.Size = new System.Drawing.Size(124, 51);
+			this.HaltButton.TabIndex = 9;
+			this.HaltButton.Text = "Halt Test";
+			this.HaltButton.UseVisualStyleBackColor = true;
+			this.HaltButton.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// label4
 			// 
@@ -280,34 +281,42 @@
 			series2.Legend = "Legend1";
 			series2.Name = "Latency(ms)";
 			series2.YValuesPerPoint = 10;
-			series3.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
 			series3.BorderWidth = 3;
 			series3.ChartArea = "ChartArea1";
-			series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-			series3.Color = System.Drawing.Color.Lime;
+			series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+			series3.Color = System.Drawing.Color.Fuchsia;
 			series3.Legend = "Legend1";
-			series3.Name = "Min Latency(ms)";
+			series3.Name = "Average Latency(ms)";
 			series3.YValuesPerPoint = 10;
 			series4.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
 			series4.BorderWidth = 3;
 			series4.ChartArea = "ChartArea1";
 			series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-			series4.Color = System.Drawing.Color.Red;
+			series4.Color = System.Drawing.Color.Lime;
 			series4.Legend = "Legend1";
-			series4.Name = "Max Latency(ms)";
+			series4.Name = "Min Latency(ms)";
 			series4.YValuesPerPoint = 10;
-			series5.BorderWidth = 4;
+			series5.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+			series5.BorderWidth = 3;
 			series5.ChartArea = "ChartArea1";
 			series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-			series5.Color = System.Drawing.Color.Gold;
+			series5.Color = System.Drawing.Color.Red;
 			series5.Legend = "Legend1";
-			series5.Name = "Jitter";
-			series5.YValuesPerPoint = 2;
+			series5.Name = "Max Latency(ms)";
+			series5.YValuesPerPoint = 10;
+			series6.BorderWidth = 4;
+			series6.ChartArea = "ChartArea1";
+			series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+			series6.Color = System.Drawing.Color.Gold;
+			series6.Legend = "Legend1";
+			series6.Name = "Jitter";
+			series6.YValuesPerPoint = 2;
 			this.NetworkInfoChart.Series.Add(series1);
 			this.NetworkInfoChart.Series.Add(series2);
 			this.NetworkInfoChart.Series.Add(series3);
 			this.NetworkInfoChart.Series.Add(series4);
 			this.NetworkInfoChart.Series.Add(series5);
+			this.NetworkInfoChart.Series.Add(series6);
 			this.NetworkInfoChart.Size = new System.Drawing.Size(1423, 453);
 			this.NetworkInfoChart.TabIndex = 19;
 			// 
@@ -666,7 +675,7 @@
 			this.Controls.Add(this.GraphAddress);
 			this.Controls.Add(this.SyncToGraphButton);
 			this.Controls.Add(this.label4);
-			this.Controls.Add(this.HaltTestButton);
+			this.Controls.Add(this.HaltButton);
 			this.Controls.Add(this.StartTestButton);
 			this.Controls.Add(this.ConnStat);
 			this.Controls.Add(this.TestStatusLabel);
@@ -703,7 +712,7 @@
 		private System.Windows.Forms.Label TestStatusLabel;
 		private System.Windows.Forms.Label ConnStat;
 		private System.Windows.Forms.Button StartTestButton;
-		private System.Windows.Forms.Button HaltTestButton;
+		private System.Windows.Forms.Button HaltButton;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button SyncToGraphButton;
         private System.Windows.Forms.Label PastTargetLabel;

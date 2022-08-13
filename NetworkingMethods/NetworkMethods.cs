@@ -103,7 +103,7 @@ namespace Network_Tool.NetworkingMethods
 		/// <param name="interval">Time interval in ms between each ping</param>
 		/// <param name="buffer">Buffer of data to send as the ping</param>
 		/// <returns>integer representing the percentage of messages dropped </returns>
-	    private int PacketLoss(string target, int interval, byte[] buffer)
+	    public int PacketLoss(string target, byte[] buffer)
 	    {
 		    //breakout method used to check the packet loss of each individual node on the route
 		    //it works by taking the address of the hop found above and pinging it 5 more times. the number of failed pings are multiplied by 20 to generate packet loss as a percentage
@@ -111,11 +111,10 @@ namespace Network_Tool.NetworkingMethods
 		    PingOptions options = new PingOptions();
 		    options.DontFragment = true;
 		    int failed = 0;
-		    int timeout = Convert.ToInt32(interval);
 		    //send 5 pings to the given address
 		    for (int packet = 0; packet< 5; packet++)
 		    {
-			    PingReply loss = plSender.Send(target, timeout, buffer, options);
+			    PingReply loss = plSender.Send(target, 100, buffer, options);
 			    if (loss.Status != IPStatus.Success)
 			    {
 				    failed += 1;

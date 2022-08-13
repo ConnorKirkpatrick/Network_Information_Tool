@@ -37,9 +37,10 @@ namespace Network_Tool.NetworkingMethods
 	    /// <param name="target">The target ipv4 as a string</param>
 	    /// <param name="interval">The time interval in ms between each ping</param>
 	    /// <returns>A Array of Arrays containing information such as packet loss, address, time to ping</returns>
-	    public async Task<NetworkHop> TraceRoute(string target, string interval)
+	    public async Task<NetworkHop> TraceRoute(string target)
 	    {
 		    Stopwatch timer = new Stopwatch();
+		    Stopwatch RTT = new Stopwatch();
 		    timer.Start();
 		    //The traceroute function, sending pings over a series of networks to create a traceroute and obtain critical diagnostic data about those networks
 		    //and the stability of a connection made over them.
@@ -54,25 +55,17 @@ namespace Network_Tool.NetworkingMethods
 			int maxHops = 30;
 			for (int i = 0; i < maxHops + 1; i++)
 			{
-				NetworkHop hop = new NetworkHop();
-				hop.SequenceNumber = i;
 				//using a stopwatch to determine the time for the ping to be received
-				PingReply pingReply = pingSender.Send(ipAddress.ToString(),Convert.ToInt32(interval),buffer, options);
-				hop.Latency = Convert.ToInt32(pingReply.RoundtripTime);
-                if (pingReply.Status.ToString() != "TimedOut")
-                {
-	                hop.Ipv4Address = pingReply.Address.MapToIPv4();
-                }
-                else
-                {
-	                hop.Ipv4Address = IPAddress.Parse("0.0.0.0");
-                }
-                
-                int packetLoss = await Task.Factory.StartNew(
-	                () => PacketLoss(ipAddress.ToString(), Convert.ToInt32(interval), buffer),
+				RTT.Reset();
+				RTT.Start();
+				PingReply pingReply = pingSender.Send(ipAddress.ToString(),100,buffer, options);
+				RTT.Stop();
+				int packetLoss = await Task.Factory.StartNew(
+	                () => PacketLoss(ipAddress.ToString(), buffer),
 	                TaskCreationOptions.None);
-                hop.PacketLoss = packetLoss;
-
+				
+                NetworkHop hop = new NetworkHop(pingReply.Address.MapToIPv4(), i+1, Convert.ToInt32(RTT.ElapsedMilliseconds), packetLoss);
+                
                 if (i == 0)
                 {
 	                baseHop = hop;

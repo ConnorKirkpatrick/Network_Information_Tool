@@ -125,5 +125,38 @@ namespace Network_Tool.NetworkingMethods
 			return (pingReply.Address.ToString() == target & pingReply.Status.ToString() == "Success");
 
 		}
+
+		public async Task<NetworkHop> UpdatePing(NetworkHop oldHop)
+		{
+			Ping newPing = new Ping();
+			PingReply pingReply = newPing.Send(oldHop.Ipv4Address.ToString(), 100, buffer,
+				new PingOptions(ttl: oldHop.SequenceNumber, dontFragment:true));
+			int packetLoss = await Task.Factory.StartNew(
+				() => PacketLoss(oldHop.Ipv4Address.ToString(),  buffer),
+				TaskCreationOptions.None);
+			
+			oldHop.Latency = Convert.ToInt32(pingReply.RoundtripTime);
+			oldHop.AverageLatency = (oldHop.AverageLatency + oldHop.Latency) / 2;
+			oldHop.PacketLoss = (packetLoss + oldHop.PacketLoss) / 2;
+			//check the min and max values for latency
+			if (oldHop.Latency > oldHop.MaxLatency)
+			{
+				oldHop.MaxLatency = oldHop.Latency;
+			}
+			else if (oldHop.Latency < oldHop.MinLatency)
+			{
+				oldHop.MinLatency = oldHop.Latency;
+			}
+			//check the min and max values for packetloss
+			if (oldHop.PacketLoss > oldHop.MaxLoss)
+			{
+				oldHop.MaxLoss = oldHop.PacketLoss;
+			}
+			else if (oldHop.PacketLoss < oldHop.MinLoss)
+			{
+				oldHop.MinLoss = oldHop.PacketLoss;
+			}
+			return oldHop;
+		}
     }
 }

@@ -38,7 +38,7 @@ namespace Network_Tool
             InitializeComponent();
             ChangeParametersButton.Enabled = false;
             StartTestButton.Enabled = false;
-            HaltTestButton.Enabled = false;
+            HaltButton.Enabled = false;
 
             //Testing connection to the SQL database
             Task<bool> result = Task<bool>.Factory.StartNew(() => SQLConn.testConnection());
@@ -189,7 +189,9 @@ namespace Network_Tool
             TestStat.Text = "Running";
 			StartTestButton.Enabled = false;
 			ChangeParametersButton.Enabled = false;
-			HaltTestButton.Enabled = true;
+			HaltButton.Enabled = true;
+            
+            testActive = true;
             
             Debug.WriteLine("Starting net test");
             //run this as a thread pool

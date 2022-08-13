@@ -29,6 +29,8 @@ namespace Network_Tool
         static System.Timers.Timer Time;
         static System.Timers.Timer Holder;
 
+        private bool testActive = false;
+        private NetworkHop baseHop;
         public UiForm()
         {
             //This is the code executed when the "main()" function calls for Form1

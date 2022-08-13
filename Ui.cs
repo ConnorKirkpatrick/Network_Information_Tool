@@ -327,7 +327,7 @@ namespace Network_Tool
             //function for actually running the network trace tool in component 3/4
             string target = Address.Text;
             string INT = Interval.Text;
-            while (HaltTestButton.Enabled == true)
+            while (HaltButton.Enabled == true)
 			{
                 //running the trace tool in component 3, clearing the graph and redrawing the points.
 				//Component3.Times(target, INT, tick);
@@ -577,7 +577,7 @@ namespace Network_Tool
             Address.ReadOnly = false;
             Interval.ReadOnly = false;
             StartTestButton.Enabled = false;
-            HaltTestButton.Enabled = false;
+            HaltButton.Enabled = false;
             TestConnectionButton.Enabled = true;
             ChangeParametersButton.Enabled = false;
         }
@@ -995,5 +995,6 @@ namespace Network_Tool
                 NetworkInfoChart.Series["Jitter"].Enabled = true;
             }
         }
+        
     }
 }

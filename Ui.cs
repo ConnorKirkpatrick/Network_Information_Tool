@@ -287,7 +287,18 @@ namespace Network_Tool
                 }
                 replaceHop = nextHop;
             }
-		}
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //function for selection of the halt button.
+            HaltButton.Enabled = false;
+            StartTestButton.Enabled = true;
+            TestStat.Text = "Not Running";
+            NetworkInfoChart.Update();
+            testActive = false;
+        }
+        
         public void clear()
         {
             //clearing the graph, invokes used due to multiple threads in execution

@@ -15,7 +15,7 @@ namespace Network_Tool.NetworkingMethods
         {
             
             string target = "8.8.8.8";
-            NetworkHop baseHop = await networkTools.TraceRoute(target,"500");
+            NetworkHop baseHop = await networkTools.TraceRoute(target);
             while(true)
             {
                 if (baseHop.NextNode == null)

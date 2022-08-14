@@ -294,6 +294,7 @@ namespace Network_Tool
             //function for selection of the halt button.
             HaltButton.Enabled = false;
             StartTestButton.Enabled = true;
+            ChangeParametersButton.Enabled = true;
             TestStat.Text = "Not Running";
             NetworkInfoChart.Update();
             testActive = false;

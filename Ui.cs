@@ -271,7 +271,7 @@ namespace Network_Tool
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Packet loss"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.PacketLoss)));
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Jitter"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.MaxLoss - nextHop.MinLoss)));
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Refresh()));
-            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Update()));
+            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.ChartAreas[0].RecalculateAxesScale()));
             
             if (nextHop.SequenceNumber == 1)
             {

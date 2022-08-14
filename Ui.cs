@@ -23,7 +23,6 @@ namespace Network_Tool
         //this allow the now independent file to be called upon and constructed as a form
         //The class is constructed as a child of the "Program"
         //the few global variables are created here in addition to the creation of global tools such as the stopwatches
-        int Click = 0;
         private NetworkMethods NetworkMethods = new NetworkMethods();
         private SQLConnection SQLConn = new SQLConnection();
         static System.Timers.Timer Time;
@@ -67,6 +66,12 @@ namespace Network_Tool
             NetworkInfoChart.Series["Jitter"].YValueMembers = "Jitter";
             NetworkInfoChart.ChartAreas["ChartArea1"].AxisX.Interval = 1;
             NetworkInfoChart.Update();
+            
+            //test code
+            Address.Text = "1.1.1.1";
+            Interval.Text = "500";
+            TestConn_Click(null, null);
+            Start_Click(null,null);
 
         }
 
@@ -153,31 +158,6 @@ namespace Network_Tool
 		private void label2_Click(object sender, EventArgs e)
 		{}
         
-        
-        private void Time_Passed(object sender, ElapsedEventArgs e)
-        {
-            //using a timer to run selected functions in timed intervals
-            if (Click < 1)
-            {
-                //the invoke is required due to the fact that the execution may have to pass over different executing threads. 
-                //normally this would be denied to avoid errors but the invoke command is used to flag the execution as an interrupt to the thread
-                StartTestButton.Invoke(new Action(() => StartTestButton.Enabled = true));
-                ChangeParametersButton.Invoke(new Action(() => ChangeParametersButton.Enabled = true));
-                SyncToGraphButton.Invoke(new Action(() => SyncToGraphButton.Enabled = true));
-                Click += 1;
-            }
-            else
-            {
-                KILL();
-            }
-            
-        }
-        public void KILL()
-        {
-            //function to halt the timer "holder"
-            Holder.Stop();
-            Click = 0;
-        }
         private async void  Start_Click(object sender, EventArgs e)
 		{
             //ensure the chart area is clear of old data

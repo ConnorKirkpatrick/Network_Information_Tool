@@ -157,7 +157,15 @@ namespace Network_Tool
 
 		private void label2_Click(object sender, EventArgs e)
 		{}
-        
+        /// <summary>
+        /// Function callwed when a user clicks the start test button. Used to initiate the testing cycle by:
+        /// Locking out user controls that could interfere with the test such as the Address and Interval text boxes
+        /// Enables the buttons used to halt the test
+        /// Performs a trace route to the target address to get each node
+        /// performs pings against each node at the selected interval and updates the result to the chart
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void  Start_Click(object sender, EventArgs e)
 		{
             //ensure the chart area is clear of old data
@@ -203,7 +211,12 @@ namespace Network_Tool
                 runTest(Interval.Text);
             });
         }
-
+        /// <summary>
+        /// The test function that performs the repeated loop to update the information on each hop after a given interval
+        /// it is setup to be called asynchronously so that the loop will not halt the main ui thread
+        /// it calls each ping update on a new thread to increase performance
+        /// </summary>
+        /// <param name="interval">The interval at which to ping each hop for new data</param>
         private void runTest(String interval)
         {
             NetworkHop nextHop = baseHop;
@@ -228,6 +241,10 @@ namespace Network_Tool
             }
             Debug.WriteLine("TESTING ENDED");
         }
+        /// <summary>
+        /// This method does the actual work on updating the node information via ICMP pings and updates the chart
+        /// </summary>
+        /// <param name="hop">The hop object to update</param>
         public async void UpdateHop(Object hop)
         {
             NetworkHop nextHop = (NetworkHop)hop;
@@ -279,7 +296,9 @@ namespace Network_Tool
             NetworkInfoChart.Update();
             testActive = false;
         }
-        
+        /// <summary>
+        /// Small function used to clear existing point data from the NetworkInfoChart object
+        /// </summary>
         public void Clear()
         {
             //clearing the graph, invokes used due to multiple threads in execution
@@ -290,25 +309,6 @@ namespace Network_Tool
             NetworkInfoChart.Series["Packet loss"].Points.Clear();
             NetworkInfoChart.Series["Jitter"].Points.Clear();
         }
-		private void Time_Elapsed(object sender, ElapsedEventArgs e)
-		{
-            //Primary timer for providing interleaved function execution
-            //function for actually running the network trace tool in component 3/4
-            string target = Address.Text;
-            string INT = Interval.Text;
-            while (HaltButton.Enabled == true)
-			{
-                //running the trace tool in component 3, clearing the graph and redrawing the points.
-				//Component3.Times(target, INT, tick);
-                Clear();
-                string date = DateTime.Now.Date.ToString();
-                string adress = Address.Text.ToString();
-                string hour = DateTime.Now.Hour.ToString();
-                drawTrace(date, adress, hour);
-            }
-            
-		}
-
         private void Form1_Load(object sender, EventArgs e)
         {
         }

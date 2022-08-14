@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+//TODO: Add system argument variables from a file to be read upon startup
 namespace Network_Tool.NetworkingMethods
 {
 	/// <summary>
@@ -111,14 +111,23 @@ namespace Network_Tool.NetworkingMethods
 			//return the calculated packet loss
 		    return failed * 20;
 	    }
-
+		/// <summary>
+		/// A single ICMP ping used to determine if a host is reachable or not
+		/// </summary>
+		/// <param name="target"></param>
+		/// <returns></returns>
 		public async Task<bool> Ping(string target)
 		{
 			PingReply pingReply = pingSender.Send(target,500,buffer, new PingOptions(ttl: 30, dontFragment:true));
 			return (pingReply.Address.ToString() == target & pingReply.Status.ToString() == "Success");
 
 		}
-
+		/// <summary>
+		/// Complex method used to update the information on a hop with more current values fetched from a ICMP ping
+		/// Also where averages, Minimums and maximums are calculated for each hop
+		/// </summary>
+		/// <param name="oldHop">The old hop object of which to fetch new information for and update</param>
+		/// <returns>The updated NetworkHop paramenter</returns>
 		public async Task<NetworkHop> UpdatePing(NetworkHop oldHop)
 		{
 			Ping newPing = new Ping();

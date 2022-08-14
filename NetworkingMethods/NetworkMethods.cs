@@ -23,11 +23,8 @@ namespace Network_Tool.NetworkingMethods
 		public NetworkMethods()
 		{
 			this.pingSender = new Ping();
-			this.options = new PingOptions();
 			string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 			this.buffer = Encoding.ASCII.GetBytes(data);
-			options.DontFragment = true;
-			options.Ttl = 1;
 		}
 	    
 	    
@@ -58,7 +55,7 @@ namespace Network_Tool.NetworkingMethods
 				//using a stopwatch to determine the time for the ping to be received
 				RTT.Reset();
 				RTT.Start();
-				PingReply pingReply = pingSender.Send(ipAddress.ToString(),100,buffer, options);
+				PingReply pingReply = pingSender.Send(ipAddress.ToString(),100,buffer, new PingOptions(ttl: i+1, dontFragment:true));
 				RTT.Stop();
 				int packetLoss = await Task.Factory.StartNew(
 	                () => PacketLoss(ipAddress.ToString(), buffer),
@@ -81,10 +78,9 @@ namespace Network_Tool.NetworkingMethods
                 if (pingReply.Status == IPStatus.Success)
                 {
 	                timer.Stop();
-	                Debug.WriteLine("Elapsed {0}ms for test",timer.ElapsedMilliseconds);
+	                Debug.WriteLine("Elapsed {0}ms for traceRoute",timer.ElapsedMilliseconds);
 	                return baseHop;
-				}
-				options.Ttl++;
+				} 
 			}
 			Debug.WriteLine("TraceRoute failed");
 			return null;
@@ -102,12 +98,11 @@ namespace Network_Tool.NetworkingMethods
 		    //it works by taking the address of the hop found above and pinging it 5 more times. the number of failed pings are multiplied by 20 to generate packet loss as a percentage
 		    Ping plSender = new Ping();
 		    PingOptions options = new PingOptions();
-		    options.DontFragment = true;
 		    int failed = 0;
 		    //send 5 pings to the given address
 		    for (int packet = 0; packet< 5; packet++)
 		    {
-			    PingReply loss = plSender.Send(target, 100, buffer, options);
+			    PingReply loss = plSender.Send(target, 500, buffer, new PingOptions(ttl: 30, dontFragment:true));
 			    if (loss.Status != IPStatus.Success)
 			    {
 				    failed += 1;
@@ -119,9 +114,7 @@ namespace Network_Tool.NetworkingMethods
 
 		public async Task<bool> Ping(string target)
 		{
-			options.Ttl = 30;
-			PingReply pingReply = pingSender.Send(target,10,buffer, options);
-			options.Ttl = 1;
+			PingReply pingReply = pingSender.Send(target,500,buffer, new PingOptions(ttl: 30, dontFragment:true));
 			return (pingReply.Address.ToString() == target & pingReply.Status.ToString() == "Success");
 
 		}
@@ -129,7 +122,7 @@ namespace Network_Tool.NetworkingMethods
 		public async Task<NetworkHop> UpdatePing(NetworkHop oldHop)
 		{
 			Ping newPing = new Ping();
-			PingReply pingReply = newPing.Send(oldHop.Ipv4Address.ToString(), 100, buffer,
+			PingReply pingReply = newPing.Send(oldHop.Ipv4Address.ToString(), 500, buffer,
 				new PingOptions(ttl: oldHop.SequenceNumber, dontFragment:true));
 			int packetLoss = await Task.Factory.StartNew(
 				() => PacketLoss(oldHop.Ipv4Address.ToString(),  buffer),

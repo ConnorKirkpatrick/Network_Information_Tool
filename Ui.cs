@@ -180,8 +180,8 @@ namespace Network_Tool
         }
         private async void  Start_Click(object sender, EventArgs e)
 		{
-            //initiating the test: ensuring the graph is clear, other controls are disabled to the user and adding the required data to the database
-            //ClearData();
+            //ensure the chart area is clear of old data
+            Clear();
 
 
             //Update all Ui elements to reflect that the test is currently active and disable conflicting controls
@@ -299,27 +299,15 @@ namespace Network_Tool
             testActive = false;
         }
         
-        public void clear()
+        public void Clear()
         {
             //clearing the graph, invokes used due to multiple threads in execution
-            //option is given due to some machines restricting the executable to one thread on the processor
-            if (this.NetworkInfoChart.InvokeRequired)
-            {
-                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Latency(ms)"].Points.Clear()));
-                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear()));
-                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear()));
-                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Jitter"].Points.Clear()));
-                NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Packet loss"].Points.Clear()));
-            }
-            else
-            {
-                NetworkInfoChart.Series["Latency(ms)"].Points.Clear();
-                NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear();
-                NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear();
-                NetworkInfoChart.Series["Jitter"].Points.Clear();
-                NetworkInfoChart.Series["Packet loss"].Points.Clear();
-            }
-            
+            NetworkInfoChart.Series["Latency(ms)"].Points.Clear();
+            NetworkInfoChart.Series["Average Latency(ms)"].Points.Clear();
+            NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear();
+            NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear();
+            NetworkInfoChart.Series["Packet loss"].Points.Clear();
+            NetworkInfoChart.Series["Jitter"].Points.Clear();
         }
 		private void Time_Elapsed(object sender, ElapsedEventArgs e)
 		{
@@ -331,13 +319,11 @@ namespace Network_Tool
 			{
                 //running the trace tool in component 3, clearing the graph and redrawing the points.
 				//Component3.Times(target, INT, tick);
-                clear();
+                Clear();
                 string date = DateTime.Now.Date.ToString();
                 string adress = Address.Text.ToString();
                 string hour = DateTime.Now.Hour.ToString();
                 drawTrace(date, adress, hour);
-
-
             }
             
 		}
@@ -553,7 +539,7 @@ namespace Network_Tool
             trim.ExecuteNonQuery();
             connection.Close();
             //function used to sync past data to graph
-            clear();
+            Clear();
             string date = GraphDate.Text.ToString();
             string adress = GraphAddress.Text.ToString();
             string hour = GraphHour.Text.ToString();

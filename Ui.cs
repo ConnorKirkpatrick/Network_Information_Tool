@@ -135,11 +135,11 @@ namespace Network_Tool
             bool netStatus = await NetworkMethods.Ping(Address.Text);
             if (netStatus)
             {
-                ConnStat.Text = "Connected to" + Address.Text;
+                ConnStat.Text = "Connected to " + Address.Text;
             }
             else
             {
-                ConnStat.Text = "Failed to connect to" + Address.Text;
+                ConnStat.Text = "Failed to connect to " + Address.Text;
                 StartTestButton.Enabled = false;
                 Interval.ReadOnly = false;
                 Address.ReadOnly = false;

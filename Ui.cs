@@ -295,15 +295,40 @@ namespace Network_Tool
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
-            //function for selection of the halt button.
-            HaltButton.Enabled = false;
-            StartTestButton.Enabled = true;
-            ChangeParametersButton.Enabled = true;
-            TestStat.Text = "Not Running";
-            NetworkInfoChart.Update();
             testActive = false;
+            TestStat.Text = "Uploading to Database...";
+            await Task.Run(() => 
+            {
+                //need to await "TESTINGENDED" to set some flag to be true
+                //once true, allow the generation of IP and time to be made
+                //then upload results to database
+                //generate date-Time-IP address as a unique ID for the test
+                while(!testFinished){}
+                NetworkHop nextHop = baseHop;
+                while (true)
+                {
+                    Debug.WriteLine("Seq: {0} Host: {1} Average Latency: {2}ms Max Latency {3}ms Min Latency {4}ms PacketLoss{5} Max Loss{6} Min Loss{7}", nextHop.SequenceNumber,
+                        nextHop.Ipv4Address, nextHop.AverageLatency, nextHop.MaxLatency, nextHop.MinLatency, nextHop.PacketLoss, nextHop.MaxLoss, nextHop.MinLoss);
+                    if(nextHop.NextNode == null){
+                        break;
+                    }
+                    nextHop = nextHop.NextNode;
+                }
+                //add the data to the sql
+                //for past data, we probably only care about average, max and min values. everything else is just nice to have in the moment
+                
+                //re-enable the system controls
+                HaltButton.Invoke(new Action(() => HaltButton.Enabled = false));
+                StartTestButton.Invoke(new Action(() => StartTestButton.Enabled = true));
+                ChangeParametersButton.Invoke(new Action(() => ChangeParametersButton.Enabled = true));
+                TestStat.Invoke(new Action(() => TestStat.Text = "Not Running"));
+            });
+            
+            
+
+
         }
         /// <summary>
         /// Small function used to clear existing point data from the NetworkInfoChart object

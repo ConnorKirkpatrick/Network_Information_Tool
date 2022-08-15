@@ -29,7 +29,9 @@ namespace Network_Tool
         static System.Timers.Timer Holder;
 
         private bool testActive = false;
+        private bool testFinished = true;
         private NetworkHop baseHop;
+        private String code;
         public UiForm()
         {
             //This is the code executed when the "main()" function calls for Form1
@@ -170,7 +172,10 @@ namespace Network_Tool
 		{
             //ensure the chart area is clear of old data
             Clear();
+            
+            //generate the test code
 
+            code = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + " " + Address.Text;
 
             //Update all Ui elements to reflect that the test is currently active and disable conflicting controls
             SyncToGraphButton.Enabled = false;
@@ -180,6 +185,7 @@ namespace Network_Tool
 			HaltButton.Enabled = true;
             
             testActive = true;
+            testFinished = false;
             
             Debug.WriteLine("Starting net test");
             //run this as a thread pool
@@ -240,6 +246,8 @@ namespace Network_Tool
                 Thread.Sleep(Convert.ToInt32(interval));
             }
             Debug.WriteLine("TESTING ENDED");
+            testFinished = true;
+
         }
         /// <summary>
         /// This method does the actual work on updating the node information via ICMP pings and updates the chart
@@ -266,6 +274,7 @@ namespace Network_Tool
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Min Latency(ms)"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.MinLatency)));
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Max Latency(ms)"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.MaxLatency)));
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Packet loss"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.PacketLoss)));
+            //jitter is calculated as the delta between the maximum and minimum packet loss observed
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Jitter"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.MaxLoss - nextHop.MinLoss)));
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Refresh()));
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.ChartAreas[0].RecalculateAxesScale()));

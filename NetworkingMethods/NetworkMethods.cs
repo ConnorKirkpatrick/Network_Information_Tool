@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 //TODO: Add system argument variables from a file to be read upon startup
 namespace Network_Tool.NetworkingMethods
@@ -60,8 +59,7 @@ namespace Network_Tool.NetworkingMethods
 				int packetLoss = await Task.Factory.StartNew(
 	                () => PacketLoss(ipAddress.ToString(), buffer),
 	                TaskCreationOptions.None);
-				
-                NetworkHop hop = new NetworkHop(pingReply.Address.MapToIPv4(), i+1, Convert.ToInt32(RTT.ElapsedMilliseconds), packetLoss);
+				NetworkHop hop = new NetworkHop(pingReply.Address.MapToIPv4(), i+1, Convert.ToInt32(RTT.ElapsedMilliseconds), packetLoss);
                 
                 if (i == 0)
                 {

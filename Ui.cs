@@ -77,24 +77,42 @@ namespace Network_Tool
 
         }
 
-        public void pastupdate()
+        public async void PastDataUpdate()
         {
-            //This section of data connects to the database with past data to display it to the user.
-            SqlConnection con = new SqlConnection("Data Source=databaseconn.database.windows.net;Initial Catalog=database conn;Integrated Security=False;User ID=ADMIN!;Password=ABCDEFG1!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-            //creating the datatable and setting up the binding parameters.
-            DataTable build = new DataTable();
-            build.Columns.Add("Adress", typeof(string));
-            build.Columns.Add("Date", typeof(string));
-            build.Columns.Add("Time", typeof(string));
-            SqlCommand buildpast = new SqlCommand("Select * from previous order by code");
-            buildpast.Connection = con;
-            SqlDataAdapter adapt = new SqlDataAdapter(buildpast);
-            //connecting to the database and binding the data
-            con.Open();
-            adapt.Fill(build);
-            con.Close();
-            PastData.DataSource = build;
+            //grab the data from the sql and generate an concise version of the data to display
+            //code, target address, number of hops, average ping&PL of the target
+            
+            //select unique list of id's
+            //query id, rip address from code, grab max for other parameters
+            DataTable pastResults = new DataTable();
+            pastResults.Columns.Add("ID", typeof(string));
+            pastResults.Columns.Add("Address", typeof(string));
+            pastResults.Columns.Add("Path Length", typeof(int));
+            pastResults.Columns.Add("Average Latency", typeof(int));
+            pastResults.Columns.Add("Average Packet Loss", typeof(int));
+            SQLiteCommand selectIDs = SQLConn.getCmd();
+            selectIDs.CommandText = "SELECT DISTINCT id FROM testData";
+            DataTable idResults = await SQLConn.getData(selectIDs);
+            Debug.WriteLine("Results: ");
+            foreach (DataRow row in idResults.Rows)
+            {
+                Debug.WriteLine(row[idResults.Columns[0]]);
+                SQLiteCommand selectAverages = SQLConn.getCmd();
+                selectAverages.CommandText =
+                    "SELECT Host, Seq, AverageLatency, AverageLoss FROM testData ORDER BY Seq DESC LIMIT 1";
+                DataTable averageResults = await SQLConn.getData(selectAverages);
+                DataRow r = pastResults.NewRow();
+                r["ID"] = row[idResults.Columns[0]];
+                r["Address"] = averageResults.Rows[0]["Host"];
+                r["Path Length"] = averageResults.Rows[0]["Seq"];
+                r["Average Latency"] = Convert.ToInt32(averageResults.Rows[0]["AverageLatency"]);
+                r["Average Packet Loss"] = Convert.ToInt32(averageResults.Rows[0]["AverageLoss"]);
+                pastResults.Rows.Add(r);
+            }
+
+            PastData.DataSource = pastResults;
             PastData.Update();
+
         }
 
 

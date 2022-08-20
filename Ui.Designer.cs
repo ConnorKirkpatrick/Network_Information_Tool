@@ -54,18 +54,12 @@
 			this.HaltButton = new System.Windows.Forms.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.SyncToGraphButton = new System.Windows.Forms.Button();
-			this.PastTargetLabel = new System.Windows.Forms.Label();
 			this.GraphAddress = new System.Windows.Forms.TextBox();
-			this.PastDateLabel = new System.Windows.Forms.Label();
-			this.GraphDate = new System.Windows.Forms.TextBox();
-			this.GraphHour = new System.Windows.Forms.TextBox();
-			this.PastHourLabel = new System.Windows.Forms.Label();
 			this.NetworkInfoChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			this.StatusLabel = new System.Windows.Forms.Label();
 			this.TestStat = new System.Windows.Forms.Label();
 			this.TRACETEXT = new System.Windows.Forms.DataGridView();
 			this.PastData = new System.Windows.Forms.DataGridView();
-			this.UpdateSQLDataButton = new System.Windows.Forms.Button();
 			this.QuerySQLDataButton = new System.Windows.Forms.Button();
 			this.PastTime = new System.Windows.Forms.TextBox();
 			this.PastDate = new System.Windows.Forms.TextBox();
@@ -76,7 +70,6 @@
 			this.ClearGraphButton = new System.Windows.Forms.Button();
 			this.label11 = new System.Windows.Forms.Label();
 			this.PastCodeLabel = new System.Windows.Forms.Label();
-			this.CODE = new System.Windows.Forms.TextBox();
 			this.PastCode = new System.Windows.Forms.TextBox();
 			this.PastChartCodeLabel = new System.Windows.Forms.Label();
 			this.CheckPloss = new System.Windows.Forms.CheckBox();
@@ -195,7 +188,7 @@
 			// 
 			// SyncToGraphButton
 			// 
-			this.SyncToGraphButton.Location = new System.Drawing.Point(965, 27);
+			this.SyncToGraphButton.Location = new System.Drawing.Point(764, 63);
 			this.SyncToGraphButton.Margin = new System.Windows.Forms.Padding(2);
 			this.SyncToGraphButton.Name = "SyncToGraphButton";
 			this.SyncToGraphButton.Size = new System.Drawing.Size(124, 40);
@@ -204,55 +197,12 @@
 			this.SyncToGraphButton.UseVisualStyleBackColor = true;
 			this.SyncToGraphButton.Click += new System.EventHandler(this.Sync_Click);
 			// 
-			// PastTargetLabel
-			// 
-			this.PastTargetLabel.AutoSize = true;
-			this.PastTargetLabel.Location = new System.Drawing.Point(700, 33);
-			this.PastTargetLabel.Name = "PastTargetLabel";
-			this.PastTargetLabel.Size = new System.Drawing.Size(107, 13);
-			this.PastTargetLabel.TabIndex = 14;
-			this.PastTargetLabel.Text = "Enter Target Address";
-			// 
 			// GraphAddress
 			// 
-			this.GraphAddress.Location = new System.Drawing.Point(844, 30);
+			this.GraphAddress.Location = new System.Drawing.Point(860, 38);
 			this.GraphAddress.Name = "GraphAddress";
-			this.GraphAddress.Size = new System.Drawing.Size(100, 20);
+			this.GraphAddress.Size = new System.Drawing.Size(157, 20);
 			this.GraphAddress.TabIndex = 13;
-			// 
-			// PastDateLabel
-			// 
-			this.PastDateLabel.AutoSize = true;
-			this.PastDateLabel.Location = new System.Drawing.Point(700, 59);
-			this.PastDateLabel.Name = "PastDateLabel";
-			this.PastDateLabel.Size = new System.Drawing.Size(56, 13);
-			this.PastDateLabel.TabIndex = 16;
-			this.PastDateLabel.Text = "Enter date";
-			// 
-			// GraphDate
-			// 
-			this.GraphDate.Location = new System.Drawing.Point(844, 56);
-			this.GraphDate.Name = "GraphDate";
-			this.GraphDate.Size = new System.Drawing.Size(100, 20);
-			this.GraphDate.TabIndex = 15;
-			// 
-			// GraphHour
-			// 
-			this.GraphHour.Location = new System.Drawing.Point(844, 80);
-			this.GraphHour.Name = "GraphHour";
-			this.GraphHour.Size = new System.Drawing.Size(100, 20);
-			this.GraphHour.TabIndex = 17;
-			this.GraphHour.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-			// 
-			// PastHourLabel
-			// 
-			this.PastHourLabel.AutoSize = true;
-			this.PastHourLabel.Location = new System.Drawing.Point(700, 84);
-			this.PastHourLabel.Name = "PastHourLabel";
-			this.PastHourLabel.Size = new System.Drawing.Size(58, 13);
-			this.PastHourLabel.TabIndex = 18;
-			this.PastHourLabel.Text = "Enter Hour";
-			this.PastHourLabel.Click += new System.EventHandler(this.label7_Click);
 			// 
 			// NetworkInfoChart
 			// 
@@ -423,17 +373,6 @@
 			this.PastData.Size = new System.Drawing.Size(380, 188);
 			this.PastData.TabIndex = 25;
 			// 
-			// UpdateSQLDataButton
-			// 
-			this.UpdateSQLDataButton.Location = new System.Drawing.Point(1377, 611);
-			this.UpdateSQLDataButton.Margin = new System.Windows.Forms.Padding(2);
-			this.UpdateSQLDataButton.Name = "UpdateSQLDataButton";
-			this.UpdateSQLDataButton.Size = new System.Drawing.Size(57, 32);
-			this.UpdateSQLDataButton.TabIndex = 26;
-			this.UpdateSQLDataButton.Text = "Update";
-			this.UpdateSQLDataButton.UseVisualStyleBackColor = true;
-			this.UpdateSQLDataButton.Click += new System.EventHandler(this.UpdatePastData_Click);
-			// 
 			// QuerySQLDataButton
 			// 
 			this.QuerySQLDataButton.Location = new System.Drawing.Point(926, 760);
@@ -501,12 +440,12 @@
 			// 
 			// ClearGraphButton
 			// 
-			this.ClearGraphButton.Location = new System.Drawing.Point(965, 90);
+			this.ClearGraphButton.Location = new System.Drawing.Point(892, 63);
 			this.ClearGraphButton.Margin = new System.Windows.Forms.Padding(2);
 			this.ClearGraphButton.Name = "ClearGraphButton";
-			this.ClearGraphButton.Size = new System.Drawing.Size(124, 33);
+			this.ClearGraphButton.Size = new System.Drawing.Size(125, 40);
 			this.ClearGraphButton.TabIndex = 34;
-			this.ClearGraphButton.Text = "Clear";
+			this.ClearGraphButton.Text = "Clear Graph";
 			this.ClearGraphButton.UseVisualStyleBackColor = true;
 			this.ClearGraphButton.Click += new System.EventHandler(this.Cleandata_Click);
 			// 
@@ -519,22 +458,6 @@
 			this.label11.Size = new System.Drawing.Size(82, 18);
 			this.label11.TabIndex = 35;
 			this.label11.Text = "Past Data";
-			// 
-			// PastCodeLabel
-			// 
-			this.PastCodeLabel.AutoSize = true;
-			this.PastCodeLabel.Location = new System.Drawing.Point(700, 108);
-			this.PastCodeLabel.Name = "PastCodeLabel";
-			this.PastCodeLabel.Size = new System.Drawing.Size(60, 13);
-			this.PastCodeLabel.TabIndex = 36;
-			this.PastCodeLabel.Text = "Enter Code";
-			// 
-			// CODE
-			// 
-			this.CODE.Location = new System.Drawing.Point(844, 106);
-			this.CODE.Name = "CODE";
-			this.CODE.Size = new System.Drawing.Size(100, 20);
-			this.CODE.TabIndex = 37;
 			// 
 			// PastCode
 			// 
@@ -651,7 +574,6 @@
 			this.Controls.Add(this.CheckPloss);
 			this.Controls.Add(this.PastChartCodeLabel);
 			this.Controls.Add(this.PastCode);
-			this.Controls.Add(this.CODE);
 			this.Controls.Add(this.PastCodeLabel);
 			this.Controls.Add(this.label11);
 			this.Controls.Add(this.ClearGraphButton);
@@ -662,16 +584,10 @@
 			this.Controls.Add(this.PastDate);
 			this.Controls.Add(this.PastTime);
 			this.Controls.Add(this.QuerySQLDataButton);
-			this.Controls.Add(this.UpdateSQLDataButton);
 			this.Controls.Add(this.PastData);
 			this.Controls.Add(this.TRACETEXT);
 			this.Controls.Add(this.TestStat);
 			this.Controls.Add(this.StatusLabel);
-			this.Controls.Add(this.PastHourLabel);
-			this.Controls.Add(this.GraphHour);
-			this.Controls.Add(this.PastDateLabel);
-			this.Controls.Add(this.GraphDate);
-			this.Controls.Add(this.PastTargetLabel);
 			this.Controls.Add(this.GraphAddress);
 			this.Controls.Add(this.SyncToGraphButton);
 			this.Controls.Add(this.label4);
@@ -715,18 +631,12 @@
 		private System.Windows.Forms.Button HaltButton;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button SyncToGraphButton;
-        private System.Windows.Forms.Label PastTargetLabel;
         private System.Windows.Forms.TextBox GraphAddress;
-        private System.Windows.Forms.Label PastDateLabel;
-        private System.Windows.Forms.TextBox GraphDate;
-        private System.Windows.Forms.TextBox GraphHour;
-        private System.Windows.Forms.Label PastHourLabel;
         public System.Windows.Forms.DataVisualization.Charting.Chart NetworkInfoChart;
         private System.Windows.Forms.Label StatusLabel;
         private System.Windows.Forms.Label TestStat;
         private System.Windows.Forms.DataGridView TRACETEXT;
         private System.Windows.Forms.DataGridView PastData;
-        private System.Windows.Forms.Button UpdateSQLDataButton;
         private System.Windows.Forms.Button QuerySQLDataButton;
         private System.Windows.Forms.TextBox PastTime;
         private System.Windows.Forms.TextBox PastDate;
@@ -737,7 +647,6 @@
         private System.Windows.Forms.Button ClearGraphButton;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label PastCodeLabel;
-        private System.Windows.Forms.TextBox CODE;
         private System.Windows.Forms.TextBox PastCode;
         private System.Windows.Forms.Label PastChartCodeLabel;
         private System.Windows.Forms.CheckBox CheckPloss;

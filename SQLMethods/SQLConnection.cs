@@ -18,7 +18,7 @@ namespace Network_Tool.SQLMethods
             conn.Open();
             adapt.Fill(dt);
             conn.Close();
-            return dt.Columns[0].ToString() == "host";
+            return dt.Columns[2].ToString() == "Host";
         }
 
         public async Task<DataTable> getData(SQLiteCommand cmd)
@@ -32,13 +32,17 @@ namespace Network_Tool.SQLMethods
             return dt;
         }
 
-        public async void setData(SQLiteCommand cmd)
+        public void setData(SQLiteCommand cmd)
         {
             //when using this command, use a prepared statement created using SqliteCommandBuilder
-            cmd.Connection = conn;
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();
+        }
+
+        public SQLiteCommand getCmd()
+        {
+            return conn.CreateCommand();
         }
     }
 }

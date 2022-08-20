@@ -2,9 +2,9 @@
 using System.Data;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Net;
-using System.Timers;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -306,18 +306,38 @@ namespace Network_Tool
                 //then upload results to database
                 //generate date-Time-IP address as a unique ID for the test
                 while(!testFinished){}
-                NetworkHop nextHop = baseHop;
+
+                NetworkHop hop = baseHop;
                 while (true)
                 {
-                    Debug.WriteLine("Seq: {0} Host: {1} Average Latency: {2}ms Max Latency {3}ms Min Latency {4}ms PacketLoss{5} Max Loss{6} Min Loss{7}", nextHop.SequenceNumber,
-                        nextHop.Ipv4Address, nextHop.AverageLatency, nextHop.MaxLatency, nextHop.MinLatency, nextHop.PacketLoss, nextHop.MaxLoss, nextHop.MinLoss);
-                    if(nextHop.NextNode == null){
+                    //add the data to the sql
+                    //for past data, we probably only care about average, max and min values. everything else is just nice to have in the moment
+                    SQLiteCommand setDataCmd = SQLConn.getCmd();
+                    setDataCmd.CommandText =
+                        "INSERT INTO testData(ID, Seq, Host, AverageLatency, MaxLatency, MinLatency, AverageLoss, MaxLoss, MinLoss) VALUES (@code,@seq,@hop,@aveLat,@maxLat,@minLat,@aveLoss,@maxLoss,@minLoss)";
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@code", code) );
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@seq", hop.SequenceNumber));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@hop" ,hop.Ipv4Address.ToString()));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@aveLat", hop.AverageLatency));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@maxLat",hop.MaxLatency));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@minLat",hop.MinLatency));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@aveLoss", hop.PacketLoss));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@maxLoss",hop.MaxLoss));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@minLoss",hop.MinLoss));
+                    SQLConn.setData(setDataCmd);
+                    if(hop.NextNode == null){
                         break;
                     }
-                    nextHop = nextHop.NextNode;
+                    hop = hop.NextNode;
+                    
                 }
-                //add the data to the sql
-                //for past data, we probably only care about average, max and min values. everything else is just nice to have in the moment
+                
+                NetworkHop nextHop = baseHop;
+                
+                    Debug.WriteLine("Seq: {0} Host: {1} Average Latency: {2}ms Max Latency {3}ms Min Latency {4}ms PacketLoss{5} Max Loss{6} Min Loss{7}", nextHop.SequenceNumber,
+                        nextHop.Ipv4Address, nextHop.AverageLatency, nextHop.MaxLatency, nextHop.MinLatency, nextHop.PacketLoss, nextHop.MaxLoss, nextHop.MinLoss);
+                   
+                
                 
                 //re-enable the system controls
                 HaltButton.Invoke(new Action(() => HaltButton.Enabled = false));

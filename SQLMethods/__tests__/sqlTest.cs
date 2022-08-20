@@ -28,7 +28,7 @@ namespace Network_Tool
             conn.Open();
             adapt.Fill(dt);
             conn.Close();
-            Assert.AreEqual(dt.Columns[0].ToString(), "host", "Unable to access table from database");
+            Assert.AreEqual(dt.Columns[2].ToString(), "host", "Unable to access table from database");
         }
 
         [Test]

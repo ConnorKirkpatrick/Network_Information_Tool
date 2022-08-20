@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using NUnit.Framework;
 

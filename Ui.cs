@@ -68,10 +68,8 @@ namespace Network_Tool
             NetworkInfoChart.Series["Jitter"].YValueMembers = "Jitter";
             NetworkInfoChart.ChartAreas["ChartArea1"].AxisX.Interval = 1;
             NetworkInfoChart.Update();
-            
             //setup the past data view
             PastDataUpdate();
-
             /*
             Address.Text = "8.8.8.8";
             Interval.Text = "500";
@@ -114,8 +112,17 @@ namespace Network_Tool
                 pastResults.Rows.Add(r);
             }
 
-            PastData.DataSource = pastResults;
-            PastData.Update();
+            if (PastData.InvokeRequired)
+            {
+                PastData.Invoke(new Action(() => PastData.DataSource = pastResults));
+                PastData.Invoke(new Action(() => PastData.Update()));
+            }
+            else
+            {
+                PastData.DataSource = pastResults;
+                PastData.Update();
+            }
+
 
         }
 
@@ -440,7 +447,7 @@ namespace Network_Tool
                 }
                 catch
                 {
-                    MessageBox.Show("The data entered for the Adress is not in IPV4 Form");
+                    MessageBox.Show("The data entered for the Address is not in IPV4 Form");
                     host = "";
                 }
             }
@@ -548,18 +555,6 @@ namespace Network_Tool
             PastData.DataSource = pastquery;
             PastData.Update();
         }
-        private void ClearData()
-        {
-            //clearing the data from both the graph and the data grid
-            NetworkInfoChart.Series["Final Latency(ms)"].Points.Clear();
-            NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear();
-            NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear();
-            NetworkInfoChart.Series["Average Latency(ms)"].Points.Clear();
-            NetworkInfoChart.Series["Jitter"].Points.Clear();
-            NetworkInfoChart.Series["Packet loss"].Points.Clear();
-            TRACETEXT.DataSource = null;
-            TRACETEXT.Update();
-        }
 
         private void Cleandata_Click(object sender, EventArgs e)
         {
@@ -572,74 +567,34 @@ namespace Network_Tool
        
         private void CheckPloss_CheckedChanged(object sender, EventArgs e)
         {
-            if(NetworkInfoChart.Series["Packet loss"].Enabled == true)
-            {
-                NetworkInfoChart.Series["Packet loss"].Enabled = false;
-            }
-            else
-            {
-                NetworkInfoChart.Series["Packet loss"].Enabled = true;
-            }
+            NetworkInfoChart.Series["Packet loss"].Enabled ^= true;
         }
 
         private void HideFinalLat_CheckedChanged(object sender, EventArgs e)
         {
-            if (NetworkInfoChart.Series["Final Latency(ms)"].Enabled == true)
-            {
-                NetworkInfoChart.Series["Final Latency(ms)"].Enabled = false;
-            }
-            else
-            {
-                NetworkInfoChart.Series["Final Latency(ms)"].Enabled = true;
-            }
+            NetworkInfoChart.Series["Final Latency(ms)"].Enabled ^= true;
+
         }
 
         private void HideMinimum_CheckedChanged(object sender, EventArgs e)
         {
-            if (NetworkInfoChart.Series["Min Latency(ms)"].Enabled == true)
-            {
-                NetworkInfoChart.Series["Min Latency(ms)"].Enabled = false;
-            }
-            else
-            {
-                NetworkInfoChart.Series["Min Latency(ms)"].Enabled = true;
-            }
+            NetworkInfoChart.Series["Min Latency(ms)"].Enabled ^= true;
+
         }
 
         private void HideMaximum_CheckedChanged(object sender, EventArgs e)
         {
-            if (NetworkInfoChart.Series["Max Latency(ms)"].Enabled == true)
-            {
-                NetworkInfoChart.Series["Max Latency(ms)"].Enabled = false;
-            }
-            else
-            {
-                NetworkInfoChart.Series["Max Latency(ms)"].Enabled = true;
-            }
+            NetworkInfoChart.Series["Max Latency(ms)"].Enabled ^= true;
         }
 
         private void HideAverage_CheckedChanged(object sender, EventArgs e)
         {
-            if (NetworkInfoChart.Series["Average Latency(ms)"].Enabled == true)
-            {
-                NetworkInfoChart.Series["Average Latency(ms)"].Enabled = false;
-            }
-            else
-            {
-                NetworkInfoChart.Series["Average Latency(ms)"].Enabled = true;
-            }
+            NetworkInfoChart.Series["Average Latency(ms)"].Enabled ^= true;
         }
 
         private void HideJitter_CheckedChanged(object sender, EventArgs e)
         {
-            if (NetworkInfoChart.Series["Jitter"].Enabled == true)
-            {
-                NetworkInfoChart.Series["Jitter"].Enabled = false;
-            }
-            else
-            {
-                NetworkInfoChart.Series["Jitter"].Enabled = true;
-            }
+            NetworkInfoChart.Series["Jitter"].Enabled ^= true;
         }
     }
 }

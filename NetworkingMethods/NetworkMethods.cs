@@ -59,7 +59,18 @@ namespace Network_Tool.NetworkingMethods
 				int packetLoss = await Task.Factory.StartNew(
 	                () => PacketLoss(ipAddress.ToString(), buffer),
 	                TaskCreationOptions.None);
-				NetworkHop hop = new NetworkHop(pingReply.Address.MapToIPv4(), i+1, Convert.ToInt32(RTT.ElapsedMilliseconds), packetLoss);
+				NetworkHop hop;
+				if (pingReply.Address == null)
+				{
+					//unable to resolve path to the target for traceroute
+					//TODO: Correct behaviour to properly inform user that this action has failed
+					hop = new NetworkHop(IPAddress.Parse("0.0.0.0"), i + 1, 0, 100);
+				}
+				else
+				{
+					hop = new NetworkHop(pingReply.Address.MapToIPv4(), i+1, Convert.ToInt32(RTT.ElapsedMilliseconds), packetLoss);
+				}
+				
                 
                 if (i == 0)
                 {
@@ -129,15 +140,25 @@ namespace Network_Tool.NetworkingMethods
 		public async Task<NetworkHop> UpdatePing(NetworkHop oldHop)
 		{
 			Ping newPing = new Ping();
-			PingReply pingReply = newPing.Send(oldHop.Ipv4Address.ToString(), 500, buffer,
-				new PingOptions(ttl: oldHop.SequenceNumber, dontFragment:true));
-			int packetLoss = await Task.Factory.StartNew(
-				() => PacketLoss(oldHop.Ipv4Address.ToString(),  buffer),
-				TaskCreationOptions.None);
+			if (oldHop.Ipv4Address.ToString() == "0.0.0.0")
+			{
+				oldHop.Latency = 0;
+				oldHop.PacketLoss = 100;
+				
+			}
+			else
+			{
+				PingReply pingReply = newPing.Send(oldHop.Ipv4Address.ToString(), 500, buffer,
+					new PingOptions(ttl: oldHop.SequenceNumber, dontFragment:true));
+				int packetLoss = await Task.Factory.StartNew(
+					() => PacketLoss(oldHop.Ipv4Address.ToString(),  buffer),
+					TaskCreationOptions.None);
 			
-			oldHop.Latency = Convert.ToInt32(pingReply.RoundtripTime);
-			oldHop.AverageLatency = (oldHop.AverageLatency + oldHop.Latency) / 2;
-			oldHop.PacketLoss = (packetLoss + oldHop.PacketLoss) / 2;
+				oldHop.Latency = Convert.ToInt32(pingReply.RoundtripTime);
+				oldHop.AverageLatency = (oldHop.AverageLatency + oldHop.Latency) / 2;
+				oldHop.PacketLoss = (packetLoss + oldHop.PacketLoss) / 2;
+			}
+			
 			//check the min and max values for latency
 			if (oldHop.Latency > oldHop.MaxLatency)
 			{

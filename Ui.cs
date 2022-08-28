@@ -25,13 +25,11 @@ namespace Network_Tool
         //the few global variables are created here in addition to the creation of global tools such as the stopwatches
         private NetworkMethods NetworkMethods = new NetworkMethods();
         private SQLConnection SQLConn = new SQLConnection();
-        static System.Timers.Timer Time;
-        static System.Timers.Timer Holder;
 
-        private bool testActive = false;
-        private bool testFinished = true;
-        private NetworkHop baseHop;
-        private String code;
+        private bool _testActive;
+        private bool _testFinished = true;
+        private NetworkHop _baseHop;
+        private String _code;
 
         public UiForm()
         {
@@ -213,7 +211,7 @@ namespace Network_Tool
 
             //generate the test code
 
-            code = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + " " + Address.Text;
+            _code = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + " " + Address.Text;
 
             //Update all Ui elements to reflect that the test is currently active and disable conflicting controls
             SyncToGraphButton.Enabled = false;
@@ -222,14 +220,14 @@ namespace Network_Tool
             ChangeParametersButton.Enabled = false;
             HaltButton.Enabled = true;
 
-            testActive = true;
-            testFinished = false;
+            _testActive = true;
+            _testFinished = false;
 
             Debug.WriteLine("Starting net test");
             //run this as a thread pool
             //we maintain a object that stores min/max for each hop and aggregates the data before it goes onto the graph
-            baseHop = await NetworkMethods.TraceRoute(Address.Text);
-            NetworkHop nextHop = baseHop;
+            _baseHop = await NetworkMethods.TraceRoute(Address.Text);
+            NetworkHop nextHop = _baseHop;
             while (true)
             {
                 Debug.WriteLine("Seq: {0} Host: {1} Latency: {2}ms PacketLoss: {3}%", nextHop.SequenceNumber,
@@ -257,7 +255,7 @@ namespace Network_Tool
 
 
             Debug.WriteLine("Current Starting IP: {0}", nextHop.Ipv4Address);
-            await Task.Run(() => { runTest(Interval.Text); });
+            await Task.Run(() => { RunTest(Interval.Text); });
         }
 
         /// <summary>
@@ -266,17 +264,17 @@ namespace Network_Tool
         /// it calls each ping update on a new thread to increase performance
         /// </summary>
         /// <param name="interval">The interval at which to ping each hop for new data</param>
-        private void runTest(String interval)
+        private void RunTest(String interval)
         {
-            NetworkHop nextHop = baseHop;
-            while (testActive)
+            NetworkHop nextHop = _baseHop;
+            while (_testActive)
             {
                 while (true)
                 {
                     ThreadPool.QueueUserWorkItem(UpdateHop, nextHop);
                     if (nextHop.SequenceNumber == 1)
                     {
-                        baseHop = nextHop;
+                        _baseHop = nextHop;
                     }
                     else if (nextHop.NextNode == null)
                     {
@@ -287,12 +285,12 @@ namespace Network_Tool
                 }
 
                 NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Update()));
-                nextHop = baseHop;
+                nextHop = _baseHop;
                 Thread.Sleep(Convert.ToInt32(interval));
             }
 
             Debug.WriteLine("TESTING ENDED");
-            testFinished = true;
+            _testFinished = true;
 
         }
 
@@ -304,14 +302,14 @@ namespace Network_Tool
         {
             NetworkHop nextHop = (NetworkHop)hop;
             //check that the test has not been halted before running expensive ping request
-            if (!testActive)
+            if (!_testActive)
             {
                 return;
             }
 
             nextHop = await NetworkMethods.UpdatePing(nextHop);
             //check that the test hasn't been halted during the wait for the ping 
-            if (!testActive)
+            if (!_testActive)
             {
                 return;
             }
@@ -342,23 +340,21 @@ namespace Network_Tool
             if (nextHop.SequenceNumber == 1)
             {
                 //overwrite the baseHop
-                baseHop = nextHop;
+                _baseHop = nextHop;
             }
             else
             {
-                NetworkHop replaceHop = baseHop;
+                NetworkHop replaceHop = _baseHop;
                 for (int i = 0; i < nextHop.SequenceNumber; i++)
                 {
                     replaceHop = replaceHop.NextNode;
                 }
-
-                replaceHop = nextHop;
             }
         }
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            testActive = false;
+            _testActive = false;
             TestStat.Text = "Uploading to Database...";
             await Task.Run(() =>
             {
@@ -366,11 +362,11 @@ namespace Network_Tool
                 //once true, allow the generation of IP and time to be made
                 //then upload results to database
                 //generate date-Time-IP address as a unique ID for the test
-                while (!testFinished)
+                while (!_testFinished)
                 {
                 }
 
-                NetworkHop hop = baseHop;
+                NetworkHop hop = _baseHop;
                 while (true)
                 {
                     //add the data to the sql
@@ -378,7 +374,7 @@ namespace Network_Tool
                     SQLiteCommand setDataCmd = SQLConn.getCmd();
                     setDataCmd.CommandText =
                         "INSERT INTO testData(ID, Seq, Host, AverageLatency, MaxLatency, MinLatency, AverageLoss, MaxLoss, MinLoss) VALUES (@code,@seq,@hop,@aveLat,@maxLat,@minLat,@aveLoss,@maxLoss,@minLoss)";
-                    setDataCmd.Parameters.Add(new SQLiteParameter("@code", code));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@code", _code));
                     setDataCmd.Parameters.Add(new SQLiteParameter("@seq", hop.SequenceNumber));
                     setDataCmd.Parameters.Add(new SQLiteParameter("@hop", hop.Ipv4Address.ToString()));
                     setDataCmd.Parameters.Add(new SQLiteParameter("@aveLat", hop.AverageLatency));
@@ -519,33 +515,16 @@ namespace Network_Tool
             TestConnectionButton.Enabled = true;
             ChangeParametersButton.Enabled = false;
         }
-
-        private void label7_Click(object sender, EventArgs e)
-        {}
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {}
-        private void TraceText_Click(object sender, EventArgs e)
-        {}
-        private void label7_Click_1(object sender, EventArgs e)
-        {}
-        private void TraceText_TextChanged(object sender, EventArgs e)
-        {}
-
-        private void UpdatePastData_Click(object sender, EventArgs e)
-        {
-            //the command behind the GUI control/button to refresh the small grid containing information on past tests
-            PastDataUpdate();
-        }
-
+        
         private void PastQuery_Click(object sender, EventArgs e)
         {
             //the control behind the query for the past test grid
             //the control takes the users input to query the database to return the data matching its parameters
             //use of regular expression to classify user input
-            string host = PastAdress.Text.ToString();
-            string date = PastDate.Text.ToString();
-            string time = PastTime.Text.ToString();
-            string past = PastCode.Text.ToString();
+            string host = PastAdress.Text;
+            string date = PastDate.Text;
+            string time = PastTime.Text;
+            string past = PastCode.Text;
             
             //each set of indented code acts as the validation for one of the users inputs
             //use of regular expressions and potentially inequalities to validate the inputs
@@ -555,9 +534,6 @@ namespace Network_Tool
                 {
                     //use of regular expression to classify user input
                     Regex ip = new Regex(@"\b{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$");
-                    MatchCollection mcI = ip.Matches(host);
-                    var test = mcI[0];
-
                 }
                 catch
                 {
@@ -571,7 +547,6 @@ namespace Network_Tool
                 {
                     Regex Rdate = new Regex(@"\b\d{2}\/\d{2}\/\d{4}(\S\0{2}\:\0{2}\:\0{2})?$");
                     MatchCollection mcD = Rdate.Matches(date);
-                    var test = mcD[0];
                 }
                 catch
                 {
@@ -589,8 +564,8 @@ namespace Network_Tool
                         {
                             try
                             {
-                                Regex RTime = new Regex(@"\b\d\d?$");
-                                MatchCollection mcT = RTime.Matches(time);
+                                Regex rTime = new Regex(@"\b\d\d?$");
+                                MatchCollection mcT = rTime.Matches(time);
                                 var test = mcT[0];
                             }
                             catch
@@ -709,16 +684,6 @@ namespace Network_Tool
         private void HideJitter_CheckedChanged(object sender, EventArgs e)
         {
             NetworkInfoChart.Series["Jitter"].Enabled ^= true;
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private void GraphIDPrompt_Click(object sender, EventArgs e)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

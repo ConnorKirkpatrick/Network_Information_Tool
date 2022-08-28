@@ -281,7 +281,6 @@
 			this.StatusLabel.Size = new System.Drawing.Size(40, 13);
 			this.StatusLabel.TabIndex = 20;
 			this.StatusLabel.Text = "Status:";
-			this.StatusLabel.Click += new System.EventHandler(this.label7_Click_1);
 			// 
 			// TestStat
 			// 
@@ -575,7 +574,6 @@
 			this.label1.Size = new System.Drawing.Size(45, 13);
 			this.label1.TabIndex = 60;
 			this.label1.Text = "Test ID:";
-			this.label1.Click += new System.EventHandler(this.label1_Click);
 			// 
 			// GraphIDPrompt
 			// 
@@ -585,7 +583,6 @@
 			this.GraphIDPrompt.Size = new System.Drawing.Size(301, 13);
 			this.GraphIDPrompt.TabIndex = 61;
 			this.GraphIDPrompt.Text = "Multiple results found; are you sure your ID is specific enough?";
-			this.GraphIDPrompt.Click += new System.EventHandler(this.GraphIDPrompt_Click);
 			// 
 			// UiForm
 			// 

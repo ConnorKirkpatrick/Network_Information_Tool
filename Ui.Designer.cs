@@ -54,7 +54,7 @@
 			this.HaltButton = new System.Windows.Forms.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.SyncToGraphButton = new System.Windows.Forms.Button();
-			this.GraphAddress = new System.Windows.Forms.TextBox();
+			this.GraphID = new System.Windows.Forms.TextBox();
 			this.NetworkInfoChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			this.StatusLabel = new System.Windows.Forms.Label();
 			this.TestStat = new System.Windows.Forms.Label();
@@ -80,6 +80,7 @@
 			this.HideJitter = new System.Windows.Forms.CheckBox();
 			this.pictureBox2 = new System.Windows.Forms.PictureBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.GraphIDPrompt = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.NetworkInfoChart)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.TRACETEXT)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.PastData)).BeginInit();
@@ -192,18 +193,18 @@
 			this.SyncToGraphButton.Location = new System.Drawing.Point(764, 63);
 			this.SyncToGraphButton.Margin = new System.Windows.Forms.Padding(2);
 			this.SyncToGraphButton.Name = "SyncToGraphButton";
-			this.SyncToGraphButton.Size = new System.Drawing.Size(124, 40);
+			this.SyncToGraphButton.Size = new System.Drawing.Size(102, 40);
 			this.SyncToGraphButton.TabIndex = 12;
 			this.SyncToGraphButton.Text = "Sync To Graph";
 			this.SyncToGraphButton.UseVisualStyleBackColor = true;
 			this.SyncToGraphButton.Click += new System.EventHandler(this.Sync_Click);
 			// 
-			// GraphAddress
+			// GraphID
 			// 
-			this.GraphAddress.Location = new System.Drawing.Point(860, 38);
-			this.GraphAddress.Name = "GraphAddress";
-			this.GraphAddress.Size = new System.Drawing.Size(157, 20);
-			this.GraphAddress.TabIndex = 13;
+			this.GraphID.Location = new System.Drawing.Point(815, 38);
+			this.GraphID.Name = "GraphID";
+			this.GraphID.Size = new System.Drawing.Size(174, 20);
+			this.GraphID.TabIndex = 13;
 			// 
 			// NetworkInfoChart
 			// 
@@ -441,7 +442,7 @@
 			// 
 			// ClearGraphButton
 			// 
-			this.ClearGraphButton.Location = new System.Drawing.Point(892, 63);
+			this.ClearGraphButton.Location = new System.Drawing.Point(870, 63);
 			this.ClearGraphButton.Margin = new System.Windows.Forms.Padding(2);
 			this.ClearGraphButton.Name = "ClearGraphButton";
 			this.ClearGraphButton.Size = new System.Drawing.Size(125, 40);
@@ -569,12 +570,22 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(748, 41);
+			this.label1.Location = new System.Drawing.Point(764, 41);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(107, 13);
+			this.label1.Size = new System.Drawing.Size(45, 13);
 			this.label1.TabIndex = 60;
-			this.label1.Text = "Enter Target Address";
+			this.label1.Text = "Test ID:";
 			this.label1.Click += new System.EventHandler(this.label1_Click);
+			// 
+			// GraphIDPrompt
+			// 
+			this.GraphIDPrompt.AutoSize = true;
+			this.GraphIDPrompt.Location = new System.Drawing.Point(995, 41);
+			this.GraphIDPrompt.Name = "GraphIDPrompt";
+			this.GraphIDPrompt.Size = new System.Drawing.Size(301, 13);
+			this.GraphIDPrompt.TabIndex = 61;
+			this.GraphIDPrompt.Text = "Multiple results found; are you sure your ID is specific enough?";
+			this.GraphIDPrompt.Click += new System.EventHandler(this.GraphIDPrompt_Click);
 			// 
 			// UiForm
 			// 
@@ -584,6 +595,7 @@
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BackColor = System.Drawing.SystemColors.ActiveCaption;
 			this.ClientSize = new System.Drawing.Size(1443, 857);
+			this.Controls.Add(this.GraphIDPrompt);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.HideJitter);
 			this.Controls.Add(this.HideAverage);
@@ -607,7 +619,7 @@
 			this.Controls.Add(this.TRACETEXT);
 			this.Controls.Add(this.TestStat);
 			this.Controls.Add(this.StatusLabel);
-			this.Controls.Add(this.GraphAddress);
+			this.Controls.Add(this.GraphID);
 			this.Controls.Add(this.SyncToGraphButton);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.HaltButton);
@@ -636,6 +648,8 @@
 			this.PerformLayout();
 		}
 
+		private System.Windows.Forms.Label GraphIDPrompt;
+
 		private System.Windows.Forms.Label label1;
 
 		#endregion
@@ -652,7 +666,7 @@
 		private System.Windows.Forms.Button HaltButton;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button SyncToGraphButton;
-        private System.Windows.Forms.TextBox GraphAddress;
+        private System.Windows.Forms.TextBox GraphID;
         public System.Windows.Forms.DataVisualization.Charting.Chart NetworkInfoChart;
         private System.Windows.Forms.Label StatusLabel;
         private System.Windows.Forms.Label TestStat;

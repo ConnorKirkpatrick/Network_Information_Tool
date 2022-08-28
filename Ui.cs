@@ -17,8 +17,8 @@ namespace Network_Tool
     /// the namespace acts as an identifier for all components of this program to keep them isolated from other programs
     /// Seen above are all the class libraries imported for each sub class. these are inherited but I have overridden them in the other components to increase efficiency
     /// </summary>
-	public partial class UiForm : Form
-	{
+    public partial class UiForm : Form
+    {
         //the creation of the "partial class" create the file "Form1" as a form utilizing the windows forms library.
         //this allow the now independent file to be called upon and constructed as a form
         //The class is constructed as a child of the "Program"
@@ -32,6 +32,7 @@ namespace Network_Tool
         private bool testFinished = true;
         private NetworkHop baseHop;
         private String code;
+
         public UiForm()
         {
             //This is the code executed when the "main()" function calls for Form1
@@ -47,11 +48,11 @@ namespace Network_Tool
             {
                 MessageBox.Show("Error reaching server");
             }
-            
+
             //setup the chart
             NetworkInfoChart.Series["Latency(ms)"].XValueMember = "Address";
             NetworkInfoChart.Series["Latency(ms)"].YValueMembers = "Latency(ms)";
-            
+
             NetworkInfoChart.Series["Average Latency(ms)"].XValueMember = "Address";
             NetworkInfoChart.Series["Average Latency(ms)"].YValueMembers = "Average Latency(ms)";
 
@@ -70,6 +71,8 @@ namespace Network_Tool
             NetworkInfoChart.Update();
             //setup the past data view
             PastDataUpdate();
+            //hide the graphID prompt
+            GraphIDPrompt.Visible = false;
             /*
             Address.Text = "8.8.8.8";
             Interval.Text = "500";
@@ -83,7 +86,7 @@ namespace Network_Tool
         {
             //grab the data from the sql and generate an concise version of the data to display
             //code, target address, number of hops, average ping&PL of the target
-            
+
             //select unique list of id's
             //query id, rip address from code, grab max for other parameters
             DataTable pastResults = new DataTable();
@@ -128,11 +131,11 @@ namespace Network_Tool
         }
 
 
-		private async void TestConn_Click(object sender, EventArgs e)
-		{
+        private async void TestConn_Click(object sender, EventArgs e)
+        {
             //Check user parameters are correct, set parameters to read-only while checking
             Address.ReadOnly = true;
-            Interval.ReadOnly = true; 
+            Interval.ReadOnly = true;
             //check that the IP is valid
             try
             {
@@ -142,9 +145,10 @@ namespace Network_Tool
             {
                 MessageBox.Show("Invalid IP address");
                 Address.ReadOnly = false;
-                Interval.ReadOnly = false; 
+                Interval.ReadOnly = false;
                 return;
             }
+
             //check that the interval is both a valid integer and >= to 500ms
             try
             {
@@ -152,7 +156,7 @@ namespace Network_Tool
                 {
                     MessageBox.Show("Minimum interval is 500ms");
                     Address.ReadOnly = false;
-                    Interval.ReadOnly = false; 
+                    Interval.ReadOnly = false;
                     return;
                 }
             }
@@ -160,9 +164,10 @@ namespace Network_Tool
             {
                 MessageBox.Show("Invalid Interval entered");
                 Address.ReadOnly = false;
-                Interval.ReadOnly = false; 
+                Interval.ReadOnly = false;
                 return;
             }
+
             TestConnectionButton.Enabled = false;
             ChangeParametersButton.Enabled = true;
             StartTestButton.Enabled = true;
@@ -183,12 +188,15 @@ namespace Network_Tool
                 ChangeParametersButton.Enabled = true;
                 TestConnectionButton.Enabled = true;
             }
+
             stopWatch.Stop();
-            Debug.WriteLine("Conn test completed in: {0}ms",stopWatch.ElapsedMilliseconds);
+            Debug.WriteLine("Conn test completed in: {0}ms", stopWatch.ElapsedMilliseconds);
         }
 
-		private void label2_Click(object sender, EventArgs e)
-		{}
+        private void label2_Click(object sender, EventArgs e)
+        {
+        }
+
         /// <summary>
         /// Function callwed when a user clicks the start test button. Used to initiate the testing cycle by:
         /// Locking out user controls that could interfere with the test such as the Address and Interval text boxes
@@ -198,11 +206,11 @@ namespace Network_Tool
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void  Start_Click(object sender, EventArgs e)
-		{
+        private async void Start_Click(object sender, EventArgs e)
+        {
             //ensure the chart area is clear of old data
             Clear();
-            
+
             //generate the test code
 
             code = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + " " + Address.Text;
@@ -210,13 +218,13 @@ namespace Network_Tool
             //Update all Ui elements to reflect that the test is currently active and disable conflicting controls
             SyncToGraphButton.Enabled = false;
             TestStat.Text = "Running";
-			StartTestButton.Enabled = false;
-			ChangeParametersButton.Enabled = false;
-			HaltButton.Enabled = true;
-            
+            StartTestButton.Enabled = false;
+            ChangeParametersButton.Enabled = false;
+            HaltButton.Enabled = true;
+
             testActive = true;
             testFinished = false;
-            
+
             Debug.WriteLine("Starting net test");
             //run this as a thread pool
             //we maintain a object that stores min/max for each hop and aggregates the data before it goes onto the graph
@@ -224,29 +232,34 @@ namespace Network_Tool
             NetworkHop nextHop = baseHop;
             while (true)
             {
-                Debug.WriteLine("Seq: {0} Host: {1} Latency: {2}ms PacketLoss: {3}%",nextHop.SequenceNumber,nextHop.Ipv4Address, nextHop.Latency, nextHop.PacketLoss);
+                Debug.WriteLine("Seq: {0} Host: {1} Latency: {2}ms PacketLoss: {3}%", nextHop.SequenceNumber,
+                    nextHop.Ipv4Address, nextHop.Latency, nextHop.PacketLoss);
                 NetworkInfoChart.Series["Latency(ms)"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.Latency);
-                NetworkInfoChart.Series["Average Latency(ms)"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.AverageLatency);
-                NetworkInfoChart.Series["Min Latency(ms)"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.MinLatency);
-                NetworkInfoChart.Series["Max Latency(ms)"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.MaxLatency);
+                NetworkInfoChart.Series["Average Latency(ms)"].Points
+                    .AddXY(nextHop.Ipv4Address.ToString(), nextHop.AverageLatency);
+                NetworkInfoChart.Series["Min Latency(ms)"].Points
+                    .AddXY(nextHop.Ipv4Address.ToString(), nextHop.MinLatency);
+                NetworkInfoChart.Series["Max Latency(ms)"].Points
+                    .AddXY(nextHop.Ipv4Address.ToString(), nextHop.MaxLatency);
                 NetworkInfoChart.Series["Packet loss"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.PacketLoss);
-                NetworkInfoChart.Series["Jitter"].Points.AddXY(nextHop.Ipv4Address.ToString(), nextHop.MaxLoss - nextHop.MinLoss);
+                NetworkInfoChart.Series["Jitter"].Points
+                    .AddXY(nextHop.Ipv4Address.ToString(), nextHop.MaxLoss - nextHop.MinLoss);
                 NetworkInfoChart.Refresh();
                 if (nextHop.NextNode == null)
                 {
                     break;
                 }
+
                 nextHop = nextHop.NextNode;
             }
+
             Debug.WriteLine(Thread.CurrentThread.ManagedThreadId);
-            
-            
-            Debug.WriteLine("Current Starting IP: {0}",nextHop.Ipv4Address);
-            await Task.Run(() => 
-            {
-                runTest(Interval.Text);
-            });
+
+
+            Debug.WriteLine("Current Starting IP: {0}", nextHop.Ipv4Address);
+            await Task.Run(() => { runTest(Interval.Text); });
         }
+
         /// <summary>
         /// The test function that performs the repeated loop to update the information on each hop after a given interval
         /// it is setup to be called asynchronously so that the loop will not halt the main ui thread
@@ -265,20 +278,24 @@ namespace Network_Tool
                     {
                         baseHop = nextHop;
                     }
-                    else if(nextHop.NextNode == null)
+                    else if (nextHop.NextNode == null)
                     {
                         break;
                     }
+
                     nextHop = nextHop.NextNode;
                 }
+
                 NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Update()));
                 nextHop = baseHop;
                 Thread.Sleep(Convert.ToInt32(interval));
             }
+
             Debug.WriteLine("TESTING ENDED");
             testFinished = true;
 
         }
+
         /// <summary>
         /// This method does the actual work on updating the node information via ICMP pings and updates the chart
         /// </summary>
@@ -291,24 +308,37 @@ namespace Network_Tool
             {
                 return;
             }
+
             nextHop = await NetworkMethods.UpdatePing(nextHop);
             //check that the test hasn't been halted during the wait for the ping 
             if (!testActive)
             {
                 return;
             }
-            Debug.WriteLine("Seq: {0} Host: {1} Latency: {2}ms PacketLoss: {3}%",nextHop.SequenceNumber,nextHop.Ipv4Address, nextHop.Latency, nextHop.PacketLoss);
-            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Latency(ms)"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.Latency)));
+
+            Debug.WriteLine("Seq: {0} Host: {1} Latency: {2}ms PacketLoss: {3}%", nextHop.SequenceNumber,
+                nextHop.Ipv4Address, nextHop.Latency, nextHop.PacketLoss);
             NetworkInfoChart.Invoke(new Action(() =>
-                NetworkInfoChart.Series["Average Latency(ms)"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.AverageLatency)));
-            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Min Latency(ms)"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.MinLatency)));
-            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Max Latency(ms)"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.MaxLatency)));
-            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Packet loss"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.PacketLoss)));
+                NetworkInfoChart.Series["Latency(ms)"].Points[nextHop.SequenceNumber - 1].SetValueY(nextHop.Latency)));
+            NetworkInfoChart.Invoke(new Action(() =>
+                NetworkInfoChart.Series["Average Latency(ms)"].Points[nextHop.SequenceNumber - 1]
+                    .SetValueY(nextHop.AverageLatency)));
+            NetworkInfoChart.Invoke(new Action(() =>
+                NetworkInfoChart.Series["Min Latency(ms)"].Points[nextHop.SequenceNumber - 1]
+                    .SetValueY(nextHop.MinLatency)));
+            NetworkInfoChart.Invoke(new Action(() =>
+                NetworkInfoChart.Series["Max Latency(ms)"].Points[nextHop.SequenceNumber - 1]
+                    .SetValueY(nextHop.MaxLatency)));
+            NetworkInfoChart.Invoke(new Action(() =>
+                NetworkInfoChart.Series["Packet loss"].Points[nextHop.SequenceNumber - 1]
+                    .SetValueY(nextHop.PacketLoss)));
             //jitter is calculated as the delta between the maximum and minimum packet loss observed
-            NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Series["Jitter"].Points[nextHop.SequenceNumber-1].SetValueY(nextHop.MaxLoss - nextHop.MinLoss)));
+            NetworkInfoChart.Invoke(new Action(() =>
+                NetworkInfoChart.Series["Jitter"].Points[nextHop.SequenceNumber - 1]
+                    .SetValueY(nextHop.MaxLoss - nextHop.MinLoss)));
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.Refresh()));
             NetworkInfoChart.Invoke(new Action(() => NetworkInfoChart.ChartAreas[0].RecalculateAxesScale()));
-            
+
             if (nextHop.SequenceNumber == 1)
             {
                 //overwrite the baseHop
@@ -321,6 +351,7 @@ namespace Network_Tool
                 {
                     replaceHop = replaceHop.NextNode;
                 }
+
                 replaceHop = nextHop;
             }
         }
@@ -329,13 +360,15 @@ namespace Network_Tool
         {
             testActive = false;
             TestStat.Text = "Uploading to Database...";
-            await Task.Run(() => 
+            await Task.Run(() =>
             {
                 //need to await "TESTINGENDED" to set some flag to be true
                 //once true, allow the generation of IP and time to be made
                 //then upload results to database
                 //generate date-Time-IP address as a unique ID for the test
-                while(!testFinished){}
+                while (!testFinished)
+                {
+                }
 
                 NetworkHop hop = baseHop;
                 while (true)
@@ -345,22 +378,25 @@ namespace Network_Tool
                     SQLiteCommand setDataCmd = SQLConn.getCmd();
                     setDataCmd.CommandText =
                         "INSERT INTO testData(ID, Seq, Host, AverageLatency, MaxLatency, MinLatency, AverageLoss, MaxLoss, MinLoss) VALUES (@code,@seq,@hop,@aveLat,@maxLat,@minLat,@aveLoss,@maxLoss,@minLoss)";
-                    setDataCmd.Parameters.Add(new SQLiteParameter("@code", code) );
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@code", code));
                     setDataCmd.Parameters.Add(new SQLiteParameter("@seq", hop.SequenceNumber));
-                    setDataCmd.Parameters.Add(new SQLiteParameter("@hop" ,hop.Ipv4Address.ToString()));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@hop", hop.Ipv4Address.ToString()));
                     setDataCmd.Parameters.Add(new SQLiteParameter("@aveLat", hop.AverageLatency));
-                    setDataCmd.Parameters.Add(new SQLiteParameter("@maxLat",hop.MaxLatency));
-                    setDataCmd.Parameters.Add(new SQLiteParameter("@minLat",hop.MinLatency));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@maxLat", hop.MaxLatency));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@minLat", hop.MinLatency));
                     setDataCmd.Parameters.Add(new SQLiteParameter("@aveLoss", hop.PacketLoss));
-                    setDataCmd.Parameters.Add(new SQLiteParameter("@maxLoss",hop.MaxLoss));
-                    setDataCmd.Parameters.Add(new SQLiteParameter("@minLoss",hop.MinLoss));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@maxLoss", hop.MaxLoss));
+                    setDataCmd.Parameters.Add(new SQLiteParameter("@minLoss", hop.MinLoss));
                     SQLConn.setData(setDataCmd);
-                    if(hop.NextNode == null){
+                    if (hop.NextNode == null)
+                    {
                         break;
                     }
+
                     hop = hop.NextNode;
-                    
+
                 }
+
                 //re-enable the system controls
                 HaltButton.Invoke(new Action(() => HaltButton.Enabled = false));
                 StartTestButton.Invoke(new Action(() => StartTestButton.Enabled = true));
@@ -368,34 +404,111 @@ namespace Network_Tool
                 TestStat.Invoke(new Action(() => TestStat.Text = "Not Running"));
                 PastDataUpdate();
             });
-            
-            
+
+
 
 
         }
+
         /// <summary>
         /// Small function used to clear existing point data from the NetworkInfoChart object
         /// </summary>
         public void Clear()
         {
             //clearing the graph, invokes used due to multiple threads in execution
-            NetworkInfoChart.Series["Latency(ms)"].Points.Clear();
-            NetworkInfoChart.Series["Average Latency(ms)"].Points.Clear();
-            NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear();
-            NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear();
-            NetworkInfoChart.Series["Packet loss"].Points.Clear();
-            NetworkInfoChart.Series["Jitter"].Points.Clear();
+            if (NetworkInfoChart.InvokeRequired)
+            {
+                NetworkInfoChart.Invoke(new Action(() =>
+                {
+                    NetworkInfoChart.Series["Latency(ms)"].Points.Clear();
+                    NetworkInfoChart.Series["Average Latency(ms)"].Points.Clear();
+                    NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear();
+                    NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear();
+                    NetworkInfoChart.Series["Packet loss"].Points.Clear();
+                    NetworkInfoChart.Series["Jitter"].Points.Clear();
+                }));
+            }
+            else
+            {
+                NetworkInfoChart.Series["Latency(ms)"].Points.Clear();
+                NetworkInfoChart.Series["Average Latency(ms)"].Points.Clear();
+                NetworkInfoChart.Series["Min Latency(ms)"].Points.Clear();
+                NetworkInfoChart.Series["Max Latency(ms)"].Points.Clear();
+                NetworkInfoChart.Series["Packet loss"].Points.Clear();
+                NetworkInfoChart.Series["Jitter"].Points.Clear();
+            }
+            
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
         }
 
-        public void Sync_Click(object sender, EventArgs e)
+        private async void Sync_Click(object sender, EventArgs e)
         {
-            //Grab data for a given test and add it to the graph
-           
+            await Task.Run(() =>
+            {
+                Clear();
+                Debug.WriteLine("RUNNING");
+            //First check we are selecting data for only one test:
+            SQLiteCommand selectData = SQLConn.getCmd();
+            selectData.CommandText =
+                "SELECT Host FROM testData WHERE ID like @id AND testData.Seq = 1";
+            selectData.Parameters.Add(new SQLiteParameter("@id", "%"+GraphID.Text+"%"));
+            DataTable selectDataResults = SQLConn.getData(selectData).Result;
+            if (selectDataResults.Rows.Count > 1)
+            {
+                //we have not isolated the test, inform the user they need to include a more specific ID
+                GraphIDPrompt.Invoke(new Action(() =>
+                {
+                    GraphIDPrompt.Visible = true;
+                }));
+            }
+            else
+            {
+                selectData.CommandText =
+                    "SELECT * FROM testData WHERE ID LIKE @id ORDER BY Seq";
+                selectData.Parameters.Add(new SQLiteParameter("@id", "%"+GraphID.Text+"%"));
+                selectDataResults = SQLConn.getData(selectData).Result;
+                foreach (DataRow row in selectDataResults.Rows)
+                {
+                    Debug.WriteLine(row[selectDataResults.Columns[1]]);
+                    NetworkInfoChart.Invoke(new Action(() =>
+                    {
+                        NetworkInfoChart.Series["Average Latency(ms)"].Points.AddXY(
+                            Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
+                            Int32.Parse(row[selectDataResults.Columns[3]].ToString()));
+                        NetworkInfoChart.Series["Min Latency(ms)"].Points.AddXY(
+                            Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
+                            Int32.Parse(row[selectDataResults.Columns[5]].ToString()));
+                        NetworkInfoChart.Series["Max Latency(ms)"].Points.AddXY(
+                            Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
+                            Int32.Parse(row[selectDataResults.Columns[4]].ToString()));
+                        NetworkInfoChart.Series["Packet loss"].Points.AddXY(
+                            Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
+                            Int32.Parse(row[selectDataResults.Columns[6]].ToString()));
+                        //jitter is calculated as the delta between the maximum and minimum packet loss observed
+                        NetworkInfoChart.Series["Jitter"].Points.AddXY(
+                            Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
+                            (Int32.Parse(row[selectDataResults.Columns[7]].ToString()) -
+                             Int32.Parse(row[selectDataResults.Columns[8]].ToString())));
+                        NetworkInfoChart.Refresh();
+                        NetworkInfoChart.ChartAreas[0].RecalculateAxesScale();
+                    }));
+                    GraphID.Invoke(new Action(() =>
+                    {
+                        GraphID.Text = "";
+                    }));
+                    GraphIDPrompt.Invoke(new Action(() =>
+                    {
+                        GraphIDPrompt.Visible = false;
+                    }));
+                }
+            }
+            });
         }
-        
+
+
         private void Change_Click(object sender, EventArgs e)
         {
             //enabling and disabling specific buttons when the user opts to change the target address or interval.
@@ -599,6 +712,11 @@ namespace Network_Tool
         }
 
         private void label1_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void GraphIDPrompt_Click(object sender, EventArgs e)
         {
             throw new System.NotImplementedException();
         }

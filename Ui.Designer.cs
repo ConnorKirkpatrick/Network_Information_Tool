@@ -79,6 +79,7 @@
 			this.HideAverage = new System.Windows.Forms.CheckBox();
 			this.HideJitter = new System.Windows.Forms.CheckBox();
 			this.pictureBox2 = new System.Windows.Forms.PictureBox();
+			this.label1 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.NetworkInfoChart)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.TRACETEXT)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.PastData)).BeginInit();
@@ -459,6 +460,13 @@
 			this.label11.TabIndex = 35;
 			this.label11.Text = "Past Data";
 			// 
+			// PastCodeLabel
+			// 
+			this.PastCodeLabel.Location = new System.Drawing.Point(0, 0);
+			this.PastCodeLabel.Name = "PastCodeLabel";
+			this.PastCodeLabel.Size = new System.Drawing.Size(100, 23);
+			this.PastCodeLabel.TabIndex = 58;
+			// 
 			// PastCode
 			// 
 			this.PastCode.Location = new System.Drawing.Point(913, 726);
@@ -558,6 +566,16 @@
 			this.pictureBox2.TabIndex = 59;
 			this.pictureBox2.TabStop = false;
 			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(748, 41);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(107, 13);
+			this.label1.TabIndex = 60;
+			this.label1.Text = "Enter Target Address";
+			this.label1.Click += new System.EventHandler(this.label1_Click);
+			// 
 			// UiForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -566,6 +584,7 @@
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BackColor = System.Drawing.SystemColors.ActiveCaption;
 			this.ClientSize = new System.Drawing.Size(1443, 857);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.HideJitter);
 			this.Controls.Add(this.HideAverage);
 			this.Controls.Add(this.HideMaximum);
@@ -616,6 +635,8 @@
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+
+		private System.Windows.Forms.Label label1;
 
 		#endregion
 

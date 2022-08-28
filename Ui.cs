@@ -442,65 +442,84 @@ namespace Network_Tool
 
         private async void Sync_Click(object sender, EventArgs e)
         {
+            Debug.WriteLine(PastData.CurrentRow.Cells["ID"].Value);
             await Task.Run(() =>
             {
                 Clear();
-                Debug.WriteLine("RUNNING");
-            //First check we are selecting data for only one test:
-            SQLiteCommand selectData = SQLConn.getCmd();
-            selectData.CommandText =
-                "SELECT Host FROM testData WHERE ID like @id AND testData.Seq = 1";
-            selectData.Parameters.Add(new SQLiteParameter("@id", "%"+GraphID.Text+"%"));
-            DataTable selectDataResults = SQLConn.getData(selectData).Result;
-            if (selectDataResults.Rows.Count > 1)
-            {
-                //we have not isolated the test, inform the user they need to include a more specific ID
-                GraphIDPrompt.Invoke(new Action(() =>
+                bool flag = false;
+                SQLiteCommand selectData = SQLConn.getCmd();
+                DataTable selectDataResults;
+                if (GraphID.Text == "")
                 {
-                    GraphIDPrompt.Visible = true;
-                }));
-            }
-            else
-            {
-                selectData.CommandText =
-                    "SELECT * FROM testData WHERE ID LIKE @id ORDER BY Seq";
-                selectData.Parameters.Add(new SQLiteParameter("@id", "%"+GraphID.Text+"%"));
-                selectDataResults = SQLConn.getData(selectData).Result;
-                foreach (DataRow row in selectDataResults.Rows)
-                {
-                    Debug.WriteLine(row[selectDataResults.Columns[1]]);
-                    NetworkInfoChart.Invoke(new Action(() =>
-                    {
-                        NetworkInfoChart.Series["Average Latency(ms)"].Points.AddXY(
-                            Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
-                            Int32.Parse(row[selectDataResults.Columns[3]].ToString()));
-                        NetworkInfoChart.Series["Min Latency(ms)"].Points.AddXY(
-                            Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
-                            Int32.Parse(row[selectDataResults.Columns[5]].ToString()));
-                        NetworkInfoChart.Series["Max Latency(ms)"].Points.AddXY(
-                            Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
-                            Int32.Parse(row[selectDataResults.Columns[4]].ToString()));
-                        NetworkInfoChart.Series["Packet loss"].Points.AddXY(
-                            Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
-                            Int32.Parse(row[selectDataResults.Columns[6]].ToString()));
-                        //jitter is calculated as the delta between the maximum and minimum packet loss observed
-                        NetworkInfoChart.Series["Jitter"].Points.AddXY(
-                            Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
-                            (Int32.Parse(row[selectDataResults.Columns[7]].ToString()) -
-                             Int32.Parse(row[selectDataResults.Columns[8]].ToString())));
-                        NetworkInfoChart.Refresh();
-                        NetworkInfoChart.ChartAreas[0].RecalculateAxesScale();
-                    }));
-                    GraphID.Invoke(new Action(() =>
-                    {
-                        GraphID.Text = "";
-                    }));
-                    GraphIDPrompt.Invoke(new Action(() =>
-                    {
-                        GraphIDPrompt.Visible = false;
-                    }));
+                    //pull data from the selected row of the PastData Table
+                    selectData.CommandText =
+                        "SELECT * FROM testData WHERE ID=@id ORDER BY Seq";
+                    selectData.Parameters.Add(new SQLiteParameter("@id", PastData.CurrentRow.Cells["ID"].Value));
+                    selectDataResults = SQLConn.getData(selectData).Result;
                 }
-            }
+                else
+                {
+                    //First check we are selecting data for only one test:
+                    selectData.CommandText =
+                        "SELECT Host FROM testData WHERE ID like @id AND testData.Seq = 1";
+                    selectData.Parameters.Add(new SQLiteParameter("@id", "%"+GraphID.Text+"%"));
+                    selectDataResults = SQLConn.getData(selectData).Result;
+                    if (selectDataResults.Rows.Count > 1)
+                    {
+                        //we have not isolated the test, inform the user they need to include a more specific ID
+                        GraphIDPrompt.Invoke(new Action(() =>
+                        {
+                            GraphIDPrompt.Visible = true;
+                            flag = true;
+                        }));
+                    }
+                    else
+                    {
+                        selectData.CommandText =
+                            "SELECT * FROM testData WHERE ID LIKE @id ORDER BY Seq";
+                        selectData.Parameters.Add(new SQLiteParameter("@id", "%"+GraphID.Text+"%"));
+                        selectDataResults = SQLConn.getData(selectData).Result;
+                    }
+                }
+
+                if (!flag)
+                {
+                    foreach (DataRow row in selectDataResults.Rows)
+                    {
+                        Debug.WriteLine(row[selectDataResults.Columns[1]]);
+                        NetworkInfoChart.Invoke(new Action(() =>
+                        {
+                            NetworkInfoChart.Series["Average Latency(ms)"].Points.AddXY(
+                                Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
+                                Int32.Parse(row[selectDataResults.Columns[3]].ToString()));
+                            NetworkInfoChart.Series["Min Latency(ms)"].Points.AddXY(
+                                Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
+                                Int32.Parse(row[selectDataResults.Columns[5]].ToString()));
+                            NetworkInfoChart.Series["Max Latency(ms)"].Points.AddXY(
+                                Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
+                                Int32.Parse(row[selectDataResults.Columns[4]].ToString()));
+                            NetworkInfoChart.Series["Packet loss"].Points.AddXY(
+                                Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
+                                Int32.Parse(row[selectDataResults.Columns[6]].ToString()));
+                            //jitter is calculated as the delta between the maximum and minimum packet loss observed
+                            NetworkInfoChart.Series["Jitter"].Points.AddXY(
+                                Int32.Parse(row[selectDataResults.Columns[1]].ToString()),
+                                (Int32.Parse(row[selectDataResults.Columns[7]].ToString()) -
+                                 Int32.Parse(row[selectDataResults.Columns[8]].ToString())));
+                            NetworkInfoChart.Refresh();
+                            NetworkInfoChart.ChartAreas[0].RecalculateAxesScale();
+                        }));
+                        GraphID.Invoke(new Action(() =>
+                        {
+                            GraphID.Text = "";
+                        }));
+                        GraphIDPrompt.Invoke(new Action(() =>
+                        {
+                            GraphIDPrompt.Visible = false;
+                        }));
+                    }
+                }
+                
             });
         }
 

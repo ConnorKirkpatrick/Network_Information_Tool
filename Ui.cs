@@ -101,7 +101,8 @@ namespace Network_Tool
                 Debug.WriteLine(row[idResults.Columns[0]]);
                 SQLiteCommand selectAverages = SQLConn.getCmd();
                 selectAverages.CommandText =
-                    "SELECT Host, Seq, AverageLatency, AverageLoss FROM testData ORDER BY Seq DESC LIMIT 1";
+                    "SELECT Host, Seq, AverageLatency, AverageLoss FROM testData WHERE ID=@id ORDER BY Seq DESC LIMIT 1";
+                selectAverages.Parameters.Add(new SQLiteParameter("@id", row[idResults.Columns[0]]));
                 DataTable averageResults = await SQLConn.getData(selectAverages);
                 DataRow r = pastResults.NewRow();
                 r["ID"] = row[idResults.Columns[0]];

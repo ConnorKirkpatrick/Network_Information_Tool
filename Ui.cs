@@ -535,7 +535,7 @@ namespace Network_Tool
             ChangeParametersButton.Enabled = false;
         }
         
-        private void PastQuery_Click(object sender, EventArgs e)
+        private async void PastQuery_Click(object sender, EventArgs e)
         {
             //the control behind the query for the past test grid
             //the control takes the users input to query the database to return the data matching its parameters
@@ -543,109 +543,112 @@ namespace Network_Tool
             string host = PastAdress.Text;
             string date = PastDate.Text;
             string time = PastTime.Text;
-            string past = PastCode.Text;
-            
-            //each set of indented code acts as the validation for one of the users inputs
-            //use of regular expressions and potentially inequalities to validate the inputs
-            if (host != "")
+            string code = PastCode.Text;
+            await Task.Run(() =>
             {
-                try
+                //each set of indented code acts as the validation for one of the users inputs
+                //use of regular expressions and potentially inequalities to validate the inputs
+                if (host != "")
                 {
-                    //use of regular expression to classify user input
-                    Regex ip = new Regex(@"\b{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$");
-                }
-                catch
-                {
-                    MessageBox.Show("The data entered for the Address is not in IPV4 Form");
-                    host = "";
-                }
-            }
-            if(date != "")
-            {
-                try
-                {
-                    Regex Rdate = new Regex(@"\b\d{2}\/\d{2}\/\d{4}(\S\0{2}\:\0{2}\:\0{2})?$");
-                    MatchCollection mcD = Rdate.Matches(date);
-                }
-                catch
-                {
-                    MessageBox.Show("The data entered for the Date is not in DD/MM/YYYY Form");
-                    date = "";
-                }
-            }
-            if(time != "")
-            {
-                try
-                {
-                    if (Convert.ToInt32(time) >= 0)
+                    try
                     {
-                        if (Convert.ToInt32(time) < 25)
-                        {
-                            try
-                            {
-                                Regex rTime = new Regex(@"\b\d\d?$");
-                                MatchCollection mcT = rTime.Matches(time);
-                                var test = mcT[0];
-                            }
-                            catch
-                            {
-                                MessageBox.Show("The data entered for the Time is not in 2-digit Form");
-                                time = "";
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("The data entered for the Time is invalid");
-                            time = "";
-                        }
+                        IPAddress addr = IPAddress.Parse(host);
                     }
-                    else
+                    catch
                     {
-                        MessageBox.Show("The data entered for the Time is not in 2-digit Form");
-                        time = "";
+                        MessageBox.Show("The data entered for the Address is not in IPV4 Form");
+                        Debug.WriteLine("The data entered for the Address is not in IPV4 Form");
+                        host = "x";
                     }
+                }
+                else
+                {
+                    host = "x";
+                }
+                if(date != "")
+                {
+                    Regex Rdate = new Regex(@"\d{4}-\d{2}-\d{2}");
+                    if (!Rdate.Match(date).Success)
+                    {
+                        MessageBox.Show("The data entered for the date is not in YYYY-MM-DD format");
+                        Debug.WriteLine("The data entered for the date is not in YYYY-MM-DD format");
+                        date = "x";  
+                    }
+
+                }
+                else
+                {
+                    date = "x";
+                }
+
+                if (time != "")
+                {
+                    Regex rTime = new Regex(@"\b\d{2}:\d{2}:\d{2}");
+                    if (!rTime.Match(time).Success)
+                    {
+                        MessageBox.Show("Time must be in the HH:MM:SS format");
+                        Debug.WriteLine("Time must be in the HH:MM:SS format");
+                        time = "x";
+                    }
+                }
+                else
+                {
+                    time = "x";
+                }
                 
-                }
-                catch
+                //reset query check
+                if (PastAdress.Text == "" && PastDate.Text == "" && PastTime.Text == "" && PastCode.Text == "")
                 {
-                    MessageBox.Show("The data entered for the Time is not in 2-digit Form");
-                    time = "";
+                    host = " ";
+                    date = " ";
+                    time = " ";
+                    code = " ";
                 }
 
+                DataTable filteredResults = new DataTable();
+                filteredResults.Columns.Add("ID", typeof(string));
+                filteredResults.Columns.Add("Address", typeof(string));
+                filteredResults.Columns.Add("Path Length", typeof(int));
+                filteredResults.Columns.Add("Average Latency", typeof(int));
+                filteredResults.Columns.Add("Average Packet Loss", typeof(int));
+                SQLiteCommand selectIDs = SQLConn.getCmd();
+                selectIDs.CommandText = "SELECT DISTINCT id FROM testData WHERE (ID LIKE @host OR ID LIKE @date OR ID LIKE @time) and SEQ = 1";
+                selectIDs.Parameters.Add(new SQLiteParameter("@host", "%"+host+"%"));
+                selectIDs.Parameters.Add(new SQLiteParameter("@date", "%"+date+"%"));
+                selectIDs.Parameters.Add(new SQLiteParameter("@time", "%"+time+"%"));
+                DataTable idResults = SQLConn.getData(selectIDs).Result;
+                Debug.WriteLine("Results: ");
+                foreach (DataRow row in idResults.Rows)
+                {
+                    Debug.WriteLine(row[idResults.Columns[0]]);
+                    SQLiteCommand selectAverages = SQLConn.getCmd();
+                    selectAverages.CommandText =
+                        "SELECT Host, Seq, AverageLatency, AverageLoss FROM testData WHERE ID=@id ORDER BY Seq DESC LIMIT 1";
+                    selectAverages.Parameters.Add(new SQLiteParameter("@id", row[idResults.Columns[0]]));
+                    DataTable averageResults = SQLConn.getData(selectAverages).Result;
+                    DataRow r = filteredResults.NewRow();
+                    r["ID"] = row[idResults.Columns[0]];
+                    r["Address"] = averageResults.Rows[0]["Host"];
+                    r["Path Length"] = averageResults.Rows[0]["Seq"];
+                    r["Average Latency"] = Convert.ToInt32(averageResults.Rows[0]["AverageLatency"]);
+                    r["Average Packet Loss"] = Convert.ToInt32(averageResults.Rows[0]["AverageLoss"]);
+                    filteredResults.Rows.Add(r);
+                }
 
-            }
-            if (past != "")
-            {
-                try
+                if (PastData.InvokeRequired)
                 {
-                    if (Convert.ToInt32(past) >= 0)
-                    {
-                        try
-                        {
-                            Regex Rdate = new Regex(@"\b\d+$");
-                            MatchCollection mcP = Rdate.Matches(past);
-                            var test = mcP[0];
-                        }
-                        catch
-                        {
-                            MessageBox.Show("The data entered for the code is not a valid posetive integer");
-                            past = "";
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("The data entered for the code is not a valid posetive integer");
-                        past = "";
-                    }
+                    PastData.Invoke(new Action(() => PastData.DataSource = filteredResults));
+                    PastData.Invoke(new Action(() => PastData.Update()));
                 }
-                catch
+                else
                 {
-                    MessageBox.Show("The data entered for the code is not a valid posetive integer");
-                    past = "";
+                    PastData.DataSource = filteredResults;
+                    PastData.Update();
                 }
-               
-            }
+            });
             
+
+            /*
             //creating datatable to store data coming from the database
             //if an incomplete series of data is input, too much data may be mistakenly selected and displayed
             DataTable pastquery = new DataTable();
@@ -662,6 +665,7 @@ namespace Network_Tool
             con.Close();
             PastData.DataSource = pastquery;
             PastData.Update();
+            */
         }
 
         private void Cleandata_Click(object sender, EventArgs e)
